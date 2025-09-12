@@ -143,11 +143,18 @@ Object.defineProperty(Object.prototype, "isAdmin", {
   set() {
     // @ts-ignore
     delete Object.prototype.isAdmin;
-    setTimeout(() => {
-      if (resolvePromise) {
-        resolvePromise(this as Core);
+    const core = this as Core;
+    const handler = setInterval(() => {
+      if (core.game && resolvePromise) {
+        const playerId = core.game.state.secret.id;
+        const playerBody = core.game.state.bodies.find((v) => v.id == playerId);
+        if(playerBody){
+          resolvePromise(core);
+          console.log('LokiBox Resolved');
+          clearInterval(handler);
+        }
       }
-    }, 3000);
+    }, 100);
   },
   configurable: true,
 });
