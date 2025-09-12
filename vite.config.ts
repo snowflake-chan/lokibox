@@ -11,7 +11,7 @@ export default defineConfig({
       userscript: {
         icon: "https://vitejs.dev/logo.svg",
         namespace: "npm/vite-plugin-monkey",
-        match: ["https://dao3.fun/play/*", "https://view.dao3.fun/p/*"],
+        match: ["https://view.dao3.fun/p/*"],
       },
     }),
   ],
