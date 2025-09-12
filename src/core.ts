@@ -132,6 +132,9 @@ export class Vector3 {
     const cos = this.cos(v);
     return 1 - cos * cos;
   }
+  scale(times: number) {
+    return new Vector3(this.x * times, this.y * times, this.z * times);
+  }
 }
 
 let resolvePromise: ((value: Core) => void) | null = null;
