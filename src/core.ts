@@ -9,6 +9,7 @@ interface State {
   secret: Secret;
   physics: Physics;
   camera: Camera;
+  playerIndex: object;
 }
 interface Secret {
   id: number;
@@ -61,7 +62,7 @@ export class Quaternion {
   static parseArray(array: number[]): Quaternion {
     return new Quaternion(array[0], array[1], array[2], array[3]);
   }
-  mul(q: Quaternion) {
+  cross(q: Quaternion) {
     return new Quaternion(
       this.w * q.w - this.x * q.x - this.y * q.y - this.z * q.z,
       this.w * q.x + this.x * q.w + this.y * q.z - this.z * q.y,
@@ -82,7 +83,36 @@ export class Quaternion {
     );
   }
   mag() {
-    return Math.sqrt(this.w ** 2 + this.x ** 2 + this.y ** 2 + this.z ** 2);
+    return Math.sqrt(
+      this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z
+    );
+  }
+}
+
+export class Vector3 {
+  x: number;
+  y: number;
+  z: number;
+  constructor(x: number, y: number, z: number) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
+  static parseArray(array: number[]): Vector3 {
+    return new Vector3(array[0], array[1], array[2]);
+  }
+  sqrMag() {
+    return this.x * this.x + this.y * this.y + this.z * this.z;
+  }
+  cross(v: Vector3) {
+    return new Vector3(
+      this.y * v.z - this.z * v.y,
+      this.z * v.x - this.x * v.z,
+      this.x * v.y - this.y * v.x
+    );
+  }
+  dot(v: Vector3) {
+    return this.x * v.x + this.y * v.y + this.z * v.z;
   }
 }
 
@@ -96,7 +126,7 @@ Object.defineProperty(Object.prototype, "isAdmin", {
       if (resolvePromise) {
         resolvePromise(this as Core);
       }
-    }, 1000);
+    }, 3000);
   },
   configurable: true,
 });
