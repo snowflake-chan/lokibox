@@ -6,6 +6,18 @@ interface Game {
 }
 interface State {
   bodies: Body[];
+  secret: Secret;
+  physics: Physics;
+  camera: Camera;
+}
+interface Secret {
+  id: number;
+}
+interface Physics {
+  gravity: number;
+}
+interface Camera {
+  rotation: number[];
 }
 interface Body {
   ax: number;
@@ -41,15 +53,17 @@ Object.defineProperty(Object.prototype, "isAdmin", {
   set() {
     // @ts-ignore
     delete Object.prototype.isAdmin;
-    if(resolvePromise){
-      resolvePromise(this);
-    };
+    setTimeout(() => {
+      if (resolvePromise) {
+        resolvePromise(this as Core);
+      }
+    }, 1000);
   },
   configurable: true,
 });
 
 export function getCore() {
-  return new Promise((resolve)=>{
-    resolvePromise=resolve;
+  return new Promise((resolve) => {
+    resolvePromise = resolve;
   });
 }
