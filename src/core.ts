@@ -69,7 +69,7 @@ export class Quaternion {
       this.w * q.z + this.x * q.y - this.y * q.x + this.z * q.w
     );
   }
-  con() {
+  inv() {
     return new Quaternion(this.w, -this.x, -this.y, -this.z);
   }
   normalize() {
