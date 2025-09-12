@@ -10,6 +10,7 @@ interface State {
   physics: Physics;
   camera: Camera;
   playerIndex: object;
+  replica: Replica;
 }
 interface Secret {
   id: number;
@@ -46,6 +47,15 @@ interface Body {
   vx: number;
   vy: number;
   vz: number;
+}
+
+interface Replica {
+  players: Player[];
+}
+
+interface Player {
+  id: number;
+  emissive: number;
 }
 
 export class Quaternion {
@@ -148,9 +158,9 @@ Object.defineProperty(Object.prototype, "isAdmin", {
       if (core.game && resolvePromise) {
         const playerId = core.game.state.secret.id;
         const playerBody = core.game.state.bodies.find((v) => v.id == playerId);
-        if(playerBody){
+        if (playerBody) {
           resolvePromise(core);
-          console.log('LokiBox Resolved');
+          console.log("LokiBox Resolved");
           clearInterval(handler);
         }
       }
