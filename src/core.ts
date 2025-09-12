@@ -87,6 +87,14 @@ export class Quaternion {
       this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z
     );
   }
+  add(q: Quaternion) {
+    return new Quaternion(
+      this.w + q.w,
+      this.x + q.x,
+      this.y + q.y,
+      this.z + q.z
+    );
+  }
 }
 
 export class Vector3 {
@@ -104,6 +112,9 @@ export class Vector3 {
   sqrMag() {
     return this.x * this.x + this.y * this.y + this.z * this.z;
   }
+  mag() {
+    return Math.sqrt(this.sqrMag());
+  }
   cross(v: Vector3) {
     return new Vector3(
       this.y * v.z - this.z * v.y,
@@ -113,6 +124,13 @@ export class Vector3 {
   }
   dot(v: Vector3) {
     return this.x * v.x + this.y * v.y + this.z * v.z;
+  }
+  cos(v: Vector3) {
+    return this.dot(v) / this.mag() / v.mag();
+  }
+  sin(v: Vector3) {
+    const cos = this.cos(v);
+    return 1 - cos * cos;
   }
 }
 
