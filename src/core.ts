@@ -10,11 +10,12 @@ interface State {
   physics: Physics;
   camera: Camera;
   playerIndex: object;
-  replica: Replica;
+  replica: StateReplica;
   input: Input;
 }
 interface Secret {
   id: number;
+  replica: SecretReplica;
 }
 interface Physics {
   gravity: number;
@@ -53,10 +54,23 @@ interface Body {
   vz: number;
 }
 
-interface Replica {
+interface StateReplica {
   players: Player[];
 }
+interface SecretReplica {
+  camera: ReplicaCamera;
+}
 
+interface ReplicaCamera {
+  distance: number;
+  fovY: number;
+  freezedAxis: number;
+  mode: number;
+  targetId: number;
+  eye: number[];
+  target: number[];
+  up: number[];
+}
 interface Player {
   id: number;
   emissive: number;

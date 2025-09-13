@@ -4,10 +4,12 @@ import App from "./App.svelte";
 import { getCore, Quaternion, Vector3 } from "./core";
 import type { Core } from "./core";
 
-console.log("LokiBox Injected.")
+console.log("LokiBox Injected.");
 
 const DEBUG = true;
 var velocity = 1.5;
+var autoAim = false;
+var autoAimTarget: number | undefined;
 
 getCore().then((v) => {
   console.log("LokiBox Resolved.");
@@ -19,6 +21,7 @@ getCore().then((v) => {
   const core = v as Core;
   const playerId = core.game.state.secret.id;
   const playerBody = core.game.state.bodies.find((v) => v.id == playerId);
+  const selfIndex = core.game.state.bodies.findIndex((v) => v.id == playerId);
 
   //喷气背包
   window.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -32,57 +35,64 @@ getCore().then((v) => {
         playerBody.vz = x * velocity;
       }
     }
+    if (e.key === "l") {
+      autoAim = true;
+      autoAimTarget = Number(prompt("目标？"));
+    }
+    if (e.key === "k" && playerBody) {
+      playerBody.px = 64;
+      playerBody.pz = 8;
+      playerBody.py = 6;
+    }
+    if (e.key === "j" && playerBody) {
+      playerBody.px = 64;
+      playerBody.pz = 120;
+      playerBody.py = 6;
+    }
   });
 
   //自动瞄准
-  setInterval(() => {
-    // if (playerBody) {
-    //   const playerIndex = Object.keys(core.game.state.playerIndex);
-    //   const aimTargets = core.game.state.bodies.filter(
-    //     (v) => v.id in playerIndex && v.id !== playerId
-    //   );
-    //   if (aimTargets.length == 0) return;
-    //   const vecDistMap = aimTargets.map(
-    //     (v) =>
-    //       new Vector3(
-    //         v.px - playerBody.px,
-    //         v.py - playerBody.py,
-    //         v.pz - playerBody.pz
-    //       )
-    //   );
-    //   const distanceMap = vecDistMap.map((v) => v.sqrMag());
-    //   const minIndex = distanceMap.reduce((minIndex, current, currentIndex) => {
-    //     return current < distanceMap[minIndex] ? currentIndex : minIndex;
-    //   }, 0);
 
-    //   const direction = vecDistMap[minIndex];
-    //   const forwardDirection = new Vector3(1, 0, 0);
-
-    //   const cos = direction.cos(forwardDirection);
-    //   const halfSin = Math.sqrt((1 - cos) / 2);
-    //   const halfCos = Math.sqrt((1 + cos) / 2);
-    //   const { x, y, z } = direction.scale(halfSin);
-
-    //   const q = new Quaternion(halfCos, x, y, z);
-    //   for (let i = 0; i < 4; i++)
-    //     core.game.state.camera.rotation[i] = Object.values(q)[i];
-    // }
-    // (core.game as any).input._handleMouseDown({
-    //   isTrusted: true,
-    //   altKey: false,
-    //   bubbles: true,
-    //   button: 0,
-    //   buttons: 1,
-    //   cancelBubble: false,
-    //   cancelable: true,
-    //   clientX: 499,
-    //   clientY: 375,
-    //   composed: true,
-    //   ctrlKey: false,
-    //   currentTarget: document,
-    //   defaultPrevented: false,
-    // });
-  }, 100);
+  if (playerBody) {
+    const selfProxy = new Proxy(playerBody, {
+      set(target, property, value) {
+        if (autoAim && autoAimTarget) {
+          core.game.state.secret.replica.camera.mode = 1;
+          if (property === "px" || property === "py" || property === "pz") {
+            const t = core.game.state.bodies.find(
+              (v) => v.id === autoAimTarget
+            );
+            if (t) {
+              core.game.state.secret.replica.camera.eye[0] = target.px;
+              core.game.state.secret.replica.camera.eye[1] = target.py + 2;
+              core.game.state.secret.replica.camera.eye[2] = target.pz;
+              core.game.state.secret.replica.camera.target[0] = t.px;
+              core.game.state.secret.replica.camera.target[1] = t.py;
+              core.game.state.secret.replica.camera.target[2] = t.pz;
+            }
+          }
+          (target as any)[property] = value;
+        }
+        return true;
+      },
+    });
+    core.game.state.bodies[selfIndex] = selfProxy;
+  }
+  // (core.game as any).input._handleMouseDown({
+  //   isTrusted: true,
+  //   altKey: false,
+  //   bubbles: true,
+  //   button: 0,
+  //   buttons: 1,
+  //   cancelBubble: false,
+  //   cancelable: true,
+  //   clientX: 499,
+  //   clientY: 375,
+  //   composed: true,
+  //   ctrlKey: false,
+  //   currentTarget: document,
+  //   defaultPrevented: false,
+  // });
 });
 
 const app = mount(App, {
