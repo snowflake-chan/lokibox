@@ -4,11 +4,13 @@ import App from "./App.svelte";
 import { getCore, Quaternion, Vector3 } from "./core";
 import type { Core } from "./core";
 
+console.log("LokiBox Injected.")
+
 const DEBUG = true;
 var velocity = 1.5;
 
 getCore().then((v) => {
-  console.log("LokiBox Injected.");
+  console.log("LokiBox Resolved.");
   if (DEBUG) {
     (window as unknown as any).core = v;
     console.warn("[WARNING] DEBUGGING");
@@ -17,7 +19,6 @@ getCore().then((v) => {
   const core = v as Core;
   const playerId = core.game.state.secret.id;
   const playerBody = core.game.state.bodies.find((v) => v.id == playerId);
-  console.log(playerBody);
 
   //喷气背包
   window.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -66,7 +67,21 @@ getCore().then((v) => {
     //   for (let i = 0; i < 4; i++)
     //     core.game.state.camera.rotation[i] = Object.values(q)[i];
     // }
-
+    // (core.game as any).input._handleMouseDown({
+    //   isTrusted: true,
+    //   altKey: false,
+    //   bubbles: true,
+    //   button: 0,
+    //   buttons: 1,
+    //   cancelBubble: false,
+    //   cancelable: true,
+    //   clientX: 499,
+    //   clientY: 375,
+    //   composed: true,
+    //   ctrlKey: false,
+    //   currentTarget: document,
+    //   defaultPrevented: false,
+    // });
   }, 100);
 });
 

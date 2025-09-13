@@ -11,6 +11,7 @@ interface State {
   camera: Camera;
   playerIndex: object;
   replica: Replica;
+  input: Input;
 }
 interface Secret {
   id: number;
@@ -20,6 +21,9 @@ interface Physics {
 }
 interface Camera {
   rotation: number[];
+}
+interface Input {
+  mouseButton: number;
 }
 interface Body {
   ax: number;
@@ -160,7 +164,6 @@ Object.defineProperty(Object.prototype, "isAdmin", {
         const playerBody = core.game.state.bodies.find((v) => v.id == playerId);
         if (playerBody) {
           resolvePromise(core);
-          console.log("LokiBox Resolved");
           clearInterval(handler);
         }
       }
