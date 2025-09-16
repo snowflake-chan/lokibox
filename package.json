@@ -20,6 +20,8 @@
     "vite-plugin-monkey": "^7.1.1"
   },
   "dependencies": {
-    "sass-embedded": "^1.92.1"
+    "lil-gui": "^0.20.0",
+    "sass-embedded": "^1.92.1",
+    "sweetalert2": "^11.23.0"
   }
 }

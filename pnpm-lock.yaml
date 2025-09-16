@@ -8,9 +8,15 @@ importers:
 
   .:
     dependencies:
+      lil-gui:
+        specifier: ^0.20.0
+        version: 0.20.0
       sass-embedded:
         specifier: ^1.92.1
         version: 1.92.1
+      sweetalert2:
+        specifier: ^11.23.0
+        version: 11.23.0
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^6.1.3
@@ -624,6 +630,9 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
+  lil-gui@0.20.0:
+    resolution: {integrity: sha512-k7Ipr0ztqslMA2XvM5z5ZaWhxQtnEOwJBfI/hmSuRh6q4iMG9L0boqqrnZSzBR1jzyJ28OMl47l65ILzRe1TdA==}
+
   locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
 
@@ -867,6 +876,9 @@ packages:
   svelte@5.38.9:
     resolution: {integrity: sha512-enpmouVYRlrCJh1T176A+8LgqRVf4Qgin2k6EZ8iU9SpqgmrIidm2M5tBwJttjNcxWjvZzs3rLu33NJoUTsF+Q==}
     engines: {node: '>=18'}
+
+  sweetalert2@11.23.0:
+    resolution: {integrity: sha512-cKzzbC3C1sIs7o9XAMw4E8F9kBtGXsBDUsd2JZ8JM/dqa+nzWwSGM+9LLYILZWzWHzX9W+HJNHyBlbHPVS/krw==}
 
   sync-child-process@1.0.2:
     resolution: {integrity: sha512-8lD+t2KrrScJ/7KXCSyfhT3/hRq78rC0wBFqNJXv3mZyn6hW2ypM05JmlSvtqRbeq6jqA94oHbxAr2vYsJ8vDA==}
@@ -1396,6 +1408,8 @@ snapshots:
 
   isexe@2.0.0: {}
 
+  lil-gui@0.20.0: {}
+
   locate-character@3.0.0: {}
 
   magic-string@0.30.19:
@@ -1637,6 +1651,8 @@ snapshots:
       locate-character: 3.0.0
       magic-string: 0.30.19
       zimmerframe: 1.1.4
+
+  sweetalert2@11.23.0: {}
 
   sync-child-process@1.0.2:
     dependencies:
