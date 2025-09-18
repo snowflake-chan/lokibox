@@ -1,6 +1,6 @@
 <script lang="ts">
   import { GUI } from "lil-gui";
-  import { isResolved } from "./func";
+  import { isResolved,jetPackSpeedStore } from "./func";
   import { tick, onMount } from "svelte";
   let menu: HTMLElement | undefined;
   const src = { jetPackSpeed: 1.5 };
@@ -14,7 +14,9 @@
       setupDrag(gui);
 
       gui.title("LokiBox");
-      gui.add(src, "jetPackSpeed", 0.5, 10, 0.5).name("喷气背包速度");
+      gui.add(src, "jetPackSpeed", 0.5, 10, 0.5)
+      .name("喷气背包速度")
+      .onChange((v:number)=>{jetPackSpeedStore.set(v)});
     }
   });
 
