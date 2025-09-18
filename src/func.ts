@@ -30,20 +30,21 @@ getCore().then((v) => {
   }
 
   const core = v as Core;
-  const playerId = core.game.state.secret.id;
-  const playerBody = core.game.state.bodies.find((v) => v.id == playerId);
-  const selfIndex = core.game.state.bodies.findIndex((v) => v.id == playerId);
+  const state = core.game.state;
+  const playerId = state.secret.id;
+  const playerBody = state.bodies.find((v) => v.id == playerId);
+  const selfIndex = state.bodies.findIndex((v) => v.id == playerId);
 
-  playerStore.set(core.game.state.replica.players);
+  playerStore.set(state.replica.players);
 
   //喷气背包
   handleKeyBindings(playerBody, core);
 
   targetIdStore.subscribe((v) => {
     if (v) {
-      core.game.state.secret.replica.camera.targetId = v;
+      state.secret.replica.camera.targetId = v;
     }else{
-      core.game.state.secret.replica.camera.targetId = playerId;
+      state.secret.replica.camera.targetId = playerId;
     }
   });
 
@@ -52,18 +53,18 @@ getCore().then((v) => {
   //   const selfProxy = new Proxy(playerBody, {
   //     set(target, property, value) {
   //       if (autoAimTarget) {
-  //         core.game.state.secret.replica.camera.mode = 1;
+  //         state.secret.replica.camera.mode = 1;
   //         if (property === "px" || property === "py" || property === "pz") {
-  //           const t = core.game.state.bodies.find(
+  //           const t = state.bodies.find(
   //             (v) => v.id === autoAimTarget
   //           );
   //           if (t) {
-  //             core.game.state.secret.replica.camera.eye[0] = target.px;
-  //             core.game.state.secret.replica.camera.eye[1] = target.py + 2;
-  //             core.game.state.secret.replica.camera.eye[2] = target.pz;
-  //             core.game.state.secret.replica.camera.target[0] = t.px;
-  //             core.game.state.secret.replica.camera.target[1] = t.py;
-  //             core.game.state.secret.replica.camera.target[2] = t.pz;
+  //             state.secret.replica.camera.eye[0] = target.px;
+  //             state.secret.replica.camera.eye[1] = target.py + 2;
+  //             state.secret.replica.camera.eye[2] = target.pz;
+  //             state.secret.replica.camera.target[0] = t.px;
+  //             state.secret.replica.camera.target[1] = t.py;
+  //             state.secret.replica.camera.target[2] = t.pz;
   //           }
   //         }
   //         (target as any)[property] = value;
@@ -71,7 +72,7 @@ getCore().then((v) => {
   //       return true;
   //     },
   //   });
-  //   core.game.state.bodies[selfIndex] = selfProxy;
+  //   state.bodies[selfIndex] = selfProxy;
   // }
   // (core.game as any).input._handleMouseDown({
   //   isTrusted: true,
@@ -103,19 +104,19 @@ function handleKeyBindings(playerBody: Body | undefined, core: Core) {
         playerBody.vz = x * jetPackSpeed;
       }
     }
-    if (e.key === "l") {
-      autoAim = true;
-      autoAimTarget = Number(prompt("目标？"));
-    }
-    if (e.key === "k" && playerBody) {
-      playerBody.px = 64;
-      playerBody.pz = 8;
-      playerBody.py = 6;
-    }
-    if (e.key === "j" && playerBody) {
-      playerBody.px = 64;
-      playerBody.pz = 120;
-      playerBody.py = 6;
-    }
+    // if (e.key === "l") {
+    //   autoAim = true;
+    //   autoAimTarget = Number(prompt("目标？"));
+    // }
+    // if (e.key === "k" && playerBody) {
+    //   playerBody.px = 64;
+    //   playerBody.pz = 8;
+    //   playerBody.py = 6;
+    // }
+    // if (e.key === "j" && playerBody) {
+    //   playerBody.px = 64;
+    //   playerBody.pz = 120;
+    //   playerBody.py = 6;
+    // }
   });
 }
