@@ -5,7 +5,7 @@ console.log("LokiBox Injected.");
 
 const DEBUG = true;
 
-const resolved = writable(false);
+const isResolved = writable(false);
 const jetPackSpeedStore = writable(1.5);
 const functionStore = writable([]);
 
@@ -20,7 +20,7 @@ getCore().then((v) => {
 
   console.log("LokiBox Resolved.");
 
-  resolved.set(true);
+  isResolved.set(true);
 
   if (DEBUG) {
     (window as unknown as any).core = v;
@@ -103,4 +103,4 @@ getCore().then((v) => {
   // });
 });
 
-export {jetPackSpeedStore, resolved};
+export {jetPackSpeedStore, isResolved};
