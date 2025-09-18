@@ -26,7 +26,7 @@ interface Camera {
 interface Input {
   mouseButton: number;
 }
-interface Body {
+export interface Body {
   ax: number;
   ay: number;
   az: number;
@@ -71,9 +71,10 @@ interface ReplicaCamera {
   target: number[];
   up: number[];
 }
-interface Player {
+export interface Player {
   id: number;
   emissive: number;
+  name: string;
 }
 
 export class Quaternion {
@@ -166,13 +167,6 @@ export class Vector3 {
 }
 
 let resolvePromise: ((value: Core) => void) | null = null;
-if (window.location.pathname.startsWith("/p")) {
-  console.log("[lokibox] play mode");
-  listenPrototype("isAdmin");
-} else if (window.location.pathname.startsWith("/e")) {
-  console.log("[lokibox] edit mode");
-  listenPrototype("permissionController");
-}
 
 function listenPrototype(param: string) {
   Object.defineProperty(Object.prototype, param, {
@@ -198,6 +192,13 @@ function listenPrototype(param: string) {
 }
 
 export function getCore() {
+  if (window.location.pathname.startsWith("/p")) {
+    console.log("[lokibox] play mode");
+    listenPrototype("isAdmin");
+  } else if (window.location.pathname.startsWith("/e")) {
+    console.log("[lokibox] edit mode");
+    listenPrototype("permissionController");
+  }
   return new Promise((resolve) => {
     resolvePromise = resolve;
   });
