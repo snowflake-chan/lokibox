@@ -1,9 +1,23 @@
 <script lang="ts">
   import { GUI } from "lil-gui";
-  import { isResolved,jetPackSpeedStore } from "./func";
+  import {
+    isResolved,
+    jetPackSpeedStore,
+    playerStore,
+    targetIdStore,
+  } from "./func";
   import { tick, onMount } from "svelte";
   let menu: HTMLElement | undefined;
-  const src = { jetPackSpeed: 1.5 };
+  const src = {
+    jetPackSpeed: 1.5,
+    teleport: {
+      x: 128,
+      y: 64,
+      z: 128,
+      teleport: function () {},
+    },
+    players: {} as any,
+  };
 
   isResolved.subscribe(async (v) => {
     if (v) {
@@ -14,9 +28,29 @@
       setupDrag(gui);
 
       gui.title("LokiBox");
-      gui.add(src, "jetPackSpeed", 0.5, 10, 0.5)
-      .name("喷气背包速度")
-      .onChange((v:number)=>{jetPackSpeedStore.set(v)});
+      gui
+        .addFolder("Properties")
+        .add(src, "jetPackSpeed", 0.5, 10, 0.5)
+        .name("JetPack.Speed")
+        .onChange((v: number) => {
+          jetPackSpeedStore.set(v);
+        });
+      const playersFolder = gui.addFolder("Players");
+      playersFolder.close();
+
+      playerStore.subscribe((v) => {
+        src.players = {};
+        for (const player of v) {
+          src.players[player.id] = {
+            setTargetId: function () {
+              targetIdStore.set(player.id);
+            },
+          };
+          const singlePlayerFolder = playersFolder.addFolder(player.name);
+          singlePlayerFolder.add(src.players[player.id], "setTargetId").name("Set as camera target");
+          singlePlayerFolder.close();
+        }
+      });
     }
   });
 
