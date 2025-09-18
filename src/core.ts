@@ -166,25 +166,36 @@ export class Vector3 {
 }
 
 let resolvePromise: ((value: Core) => void) | null = null;
+if (window.location.pathname.startsWith("/p")) {
+  console.log("[lokibox] play mode");
+  listenPrototype("isAdmin");
+} else if (window.location.pathname.startsWith("/e")) {
+  console.log("[lokibox] edit mode");
+  listenPrototype("permissionController");
+}
 
-Object.defineProperty(Object.prototype, "isAdmin", {
-  set() {
-    // @ts-ignore
-    delete Object.prototype.isAdmin;
-    const core = this as Core;
-    const handler = setInterval(() => {
-      if (core.game && resolvePromise) {
-        const playerId = core.game.state.secret.id;
-        const playerBody = core.game.state.bodies.find((v) => v.id == playerId);
-        if (playerBody) {
-          resolvePromise(core);
-          clearInterval(handler);
+function listenPrototype(param: string) {
+  Object.defineProperty(Object.prototype, param, {
+    set() {
+      // @ts-ignore
+      delete Object.prototype[param];
+      const core = this as Core;
+      const handler = setInterval(() => {
+        if (core.game && resolvePromise) {
+          const playerId = core.game.state.secret.id;
+          const playerBody = core.game.state.bodies.find(
+            (v) => v.id == playerId
+          );
+          if (playerBody) {
+            resolvePromise(core);
+            clearInterval(handler);
+          }
         }
-      }
-    }, 100);
-  },
-  configurable: true,
-});
+      }, 100);
+    },
+    configurable: true,
+  });
+}
 
 export function getCore() {
   return new Promise((resolve) => {
