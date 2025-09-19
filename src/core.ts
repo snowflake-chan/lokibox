@@ -1,10 +1,10 @@
 export interface Core {
   game: Game;
 }
-interface Game {
+export interface Game {
   state: State;
 }
-interface State {
+export interface State {
   bodies: Body[];
   secret: Secret;
   physics: Physics;

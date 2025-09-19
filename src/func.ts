@@ -1,5 +1,12 @@
 import { writable, type Writable } from "svelte/store";
-import { getCore, type Core, type Player, type Body, Quaternion } from "./core";
+import {
+  getCore,
+  type Core,
+  type Player,
+  type Body,
+  Quaternion,
+  type State,
+} from "./core";
 
 console.log("LokiBox Injected.");
 
@@ -19,6 +26,12 @@ jetPackSpeedStore.subscribe((v) => {
 var autoAim = false;
 var autoAimTarget: number | undefined;
 
+var state: State;
+
+function refreshPlayerList() {
+  playerStore.set(state.replica.players);
+}
+
 getCore().then((v) => {
   console.log("LokiBox Resolved.");
 
@@ -30,10 +43,9 @@ getCore().then((v) => {
   }
 
   const core = v as Core;
-  const state = core.game.state;
+  state = core.game.state;
   const playerId = state.secret.id;
   const playerBody = state.bodies.find((v) => v.id == playerId);
-  const selfIndex = state.bodies.findIndex((v) => v.id == playerId);
 
   playerStore.set(state.replica.players);
 
@@ -43,7 +55,7 @@ getCore().then((v) => {
   targetIdStore.subscribe((v) => {
     if (v) {
       state.secret.replica.camera.targetId = v;
-    }else{
+    } else {
       state.secret.replica.camera.targetId = playerId;
     }
   });
@@ -91,7 +103,13 @@ getCore().then((v) => {
   // });
 });
 
-export { jetPackSpeedStore, isResolved, playerStore, targetIdStore };
+export {
+  jetPackSpeedStore,
+  isResolved,
+  playerStore,
+  targetIdStore,
+  refreshPlayerList,
+};
 function handleKeyBindings(playerBody: Body | undefined, core: Core) {
   window.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.key === "r") {

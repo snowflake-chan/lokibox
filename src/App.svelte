@@ -5,6 +5,7 @@
     jetPackSpeedStore,
     playerStore,
     targetIdStore,
+    refreshPlayerList,
   } from "./func";
   import { tick, onMount } from "svelte";
   let menu: HTMLElement | undefined;
@@ -16,6 +17,7 @@
       z: 128,
       teleport: function () {},
     },
+    refreshPlayerList,
     players: {} as any,
   };
 
@@ -24,6 +26,7 @@
       await tick();
       console.log("LokiBox Menu Loaded");
       const gui = new GUI({ container: menu });
+      console.log(gui);
       gui.close();
       setupDrag(gui);
 
@@ -36,10 +39,12 @@
           jetPackSpeedStore.set(v);
         });
       const playersFolder = gui.addFolder("Players");
+      playersFolder.add(src, "refreshPlayerList").name("Refresh");
       playersFolder.close();
 
       playerStore.subscribe((v) => {
-        src.players = {};
+        Object.assign(src.players, {});
+        [...playersFolder.folders].forEach(f => f.destroy());
         for (const player of v) {
           src.players[player.id] = {
             setTargetId: function () {
