@@ -7,6 +7,7 @@ import {
   Quaternion,
   type State,
 } from "./core";
+import { GM_getValue } from "$";
 
 console.log("LokiBox Injected.");
 
@@ -16,15 +17,13 @@ const isResolved = writable(false);
 const jetPackSpeedStore = writable(1.5);
 const playerStore: Writable<Player[]> = writable([]);
 const targetIdStore: Writable<number | undefined> = writable(undefined);
-const shortcutStore: Writable<any> = writable({
-  openMenu: "Tab",
-  jetPack: "r",
-});
 
-const shortcut = {
+const shortcut = GM_getValue("shortcut",{
   openMenu: "Tab",
   jetPack: "r",
-};
+})
+
+const shortcutStore: Writable<any> = writable(shortcut);
 
 shortcutStore.subscribe((v) => {
   Object.assign(shortcut, v);

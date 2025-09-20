@@ -10,15 +10,16 @@
     shortcutStore,
   } from "./func";
   import Menu from "./components/Menu.svelte";
+  import { GM_getValue, GM_setValue } from "$";
 
   let propertiesMenu: Menu | undefined;
   let playerMenu: Menu | undefined;
   let shortcutMenu: Menu | undefined;
 
-  const shortcut = {
+  const shortcut = GM_getValue("shortcut", {
     openMenu: "Tab",
     jetPack: "r",
-  };
+  });
 
   type PropertiesSettings = {
     jetPackSpeed: number;
@@ -116,12 +117,20 @@
         }
       });
 
-      //@ts-ignore
-      shortcutMenu.add(shortcut, "openMenu").name("Open Menu").onChange(updateShortcut);
-      //@ts-ignore
-      shortcutMenu.add(shortcut, "jetPack").name("JetPack").onChange(updateShortcut);
+      shortcutMenu
+        //@ts-ignore
+        .add(shortcut, "openMenu")
+        .name("Open Menu")
+        .onChange(updateShortcut);
 
-      function updateShortcut(){
+      shortcutMenu
+        //@ts-ignore
+        .add(shortcut, "jetPack")
+        .name("JetPack")
+        .onChange(updateShortcut);
+
+      function updateShortcut() {
+        GM_setValue("shortcut", shortcut);
         shortcutStore.set(shortcut);
       }
     }
