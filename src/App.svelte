@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { GUI } from "lil-gui";
+  import { type Player } from "./core";
   import {
     isResolved,
     jetPackSpeedStore,
@@ -8,8 +8,12 @@
     refreshPlayerList,
   } from "./func";
   import { tick, onMount } from "svelte";
-  let menu: HTMLElement | undefined;
-  const src = {
+  import Menu from "./components/Menu.svelte";
+
+  let propertiesMenu: Menu | undefined;
+  let playerMenu: Menu | undefined;
+
+  const propertiesSettings = {
     jetPackSpeed: 1.5,
     teleport: {
       x: 128,
@@ -17,136 +21,114 @@
       z: 128,
       teleport: function () {},
     },
-    refreshPlayerList,
-    players: {} as any,
   };
+
+  type SinglePlayerSettings = {
+    setTargetId: () => void;
+  };
+
+  type PlayerSettings = {
+    refreshPlayerList: () => void;
+    players: SinglePlayerSettings[];
+  };
+
+  const playerSettings: PlayerSettings = {
+    refreshPlayerList,
+    players: [],
+  };
+
+  var doDisplayMenu = false;
+
+  document.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.key === "Tab") {
+      doDisplayMenu = !doDisplayMenu;
+    }
+  });
 
   isResolved.subscribe(async (v) => {
     if (v) {
-      await tick();
+      await waitUntil(() => !(!propertiesMenu || !playerMenu));
       console.log("LokiBox Menu Loaded");
-      const gui = new GUI({ container: menu });
-      console.log(gui);
-      gui.close();
-      setupDrag(gui);
+      if (!propertiesMenu) return;
+      if (!playerMenu) return;
 
-      gui.title("LokiBox");
-      gui
-        .addFolder("Properties")
-        .add(src, "jetPackSpeed", 0.5, 10, 0.5)
+      //参数设置
+      propertiesMenu
+        //喷气背包
+        //@ts-ignore
+        .add(propertiesSettings, "jetPackSpeed", 0.5, 10, 0.5)
         .name("JetPack.Speed")
         .onChange((v: number) => {
           jetPackSpeedStore.set(v);
         });
-      const playersFolder = gui.addFolder("Players");
-      playersFolder.add(src, "refreshPlayerList").name("Refresh");
-      playersFolder.close();
+
+      //玩家设置
+      //@ts-ignore
+      playerMenu.add(playerSettings, "refreshPlayerList").name("Refresh");
 
       playerStore.subscribe((v) => {
-        Object.assign(src.players, {});
-        [...playersFolder.folders].forEach(f => f.destroy());
+        if (!playerMenu) return;
+        Object.assign(playerSettings, {});
+        playerMenu.getFolders().forEach((f) => f.destroy());
+
         for (const player of v) {
-          src.players[player.id] = {
+          const players = playerSettings.players;
+
+          players.push({
             setTargetId: function () {
               targetIdStore.set(player.id);
             },
-          };
-          const singlePlayerFolder = playersFolder.addFolder(player.name);
-          singlePlayerFolder.add(src.players[player.id], "setTargetId").name("Set as camera target");
+          });
+
+          const singlePlayerFolder = playerMenu.addFolder(player.name);
+
+          singlePlayerFolder
+            .add(playerSettings.players[players.length - 1], "setTargetId")
+            .name("Set as camera target");
+
           singlePlayerFolder.close();
         }
       });
     }
   });
 
-  let isDragging = false;
-  let startX: number, startY: number;
-  let initialLeft: number, initialTop: number;
-  let isClick: boolean;
-
-  function setupDrag(gui: GUI) {
-    if (!menu) return;
-
-    // 添加拖动事件监听
-    gui.$title.draggable = true;
-    gui.$title.addEventListener("mousedown", startDrag);
-    document.addEventListener("mousemove", drag);
-    document.addEventListener("mouseup", stopDrag);
-
-    const originalFunc = gui.openAnimated;
-    gui.openAnimated = function (open?: boolean) {
-      if (isClick) {
-        return originalFunc.call(gui, open);
-      }
-      return this;
-    };
+  function waitUntil(condition: () => boolean, interval = 50): Promise<void> {
+    return new Promise((resolve) => {
+      const timer = setInterval(() => {
+        if (condition()) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, interval);
+    });
   }
-  function startDrag(e: MouseEvent) {
-    if (!menu) return;
-    isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
-
-    // 获取当前位置
-    const rect = menu.getBoundingClientRect();
-    initialLeft = rect.left;
-    initialTop = rect.top;
-
-    // 防止文本选择
-    e.preventDefault();
-    menu.style.cursor = "grabbing";
-  }
-
-  function drag(e: MouseEvent) {
-    if (!isDragging || !menu) return;
-
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-
-    menu.style.left = `${initialLeft + dx}px`;
-    menu.style.top = `${initialTop + dy}px`;
-  }
-
-  function stopDrag(e: MouseEvent) {
-    isDragging = false;
-    if (menu) {
-      menu.style.cursor = "grab";
-    }
-    const distX = startX - e.clientX;
-    const distY = startY - e.clientY;
-    const dist = distX * distX + distY * distY;
-    isClick = dist < 5;
-  }
-
-  // 组件卸载时清理事件监听
-  onMount(() => {
-    return () => {
-      document.removeEventListener("mousemove", drag);
-      document.removeEventListener("mouseup", stopDrag);
-    };
-  });
 </script>
 
 <main>
-  {#if $isResolved}
-    <div id="menu" bind:this={menu}></div>
-  {/if}
+  <div id="root" class:transparent={doDisplayMenu}>
+    <Menu title="Properties" bind:this={propertiesMenu}></Menu>
+    <Menu title="Players" bind:this={playerMenu}></Menu>
+  </div>
 </main>
 
 <style lang="scss">
-  #menu {
-    position: absolute;
-    left: 20px;
-    top: 20px;
+  #root {
     z-index: 999;
-    border-radius: 8px;
-    overflow: hidden;
-    transition:
-      box-shadow 0.3s ease,
-      width 0.3s ease,
-      height 0.3s ease;
-    &:hover {
-      box-shadow: 0 0 10px 1px aqua;
-    }
+    background-color: black;
+    background-color: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  #root.transparent {
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  #root:not(.transparent) {
+    opacity: 1;
+    transition: opacity 0.3s;
   }
 </style>
