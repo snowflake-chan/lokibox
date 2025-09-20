@@ -58,6 +58,7 @@
   document.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.key === shortcut.openMenu) {
       doHideMenu = !doHideMenu;
+      document.exitPointerLock();
     }
     if (!doHideMenu && e.key === "Escape") {
       doHideMenu = true;
