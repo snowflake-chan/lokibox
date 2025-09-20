@@ -25,10 +25,6 @@ jetPackSpeedStore.subscribe((v) => {
 
 var state: State;
 
-function refreshPlayerList() {
-  playerStore.set(state.replica.players);
-}
-
 getCore().then((v) => {
   console.log("LokiBox Resolved.");
 
@@ -58,13 +54,27 @@ getCore().then((v) => {
   });
 });
 
-export {
-  jetPackSpeedStore,
-  isResolved,
-  playerStore,
-  targetIdStore,
-  refreshPlayerList,
-};
+export { jetPackSpeedStore, isResolved, playerStore, targetIdStore };
+export function refreshPlayerList() {
+  playerStore.set(state.replica.players);
+}
+
+var autoClickerHandler: number;
+export function deployAutoClicker(interval: number) {
+  autoClickerHandler = setInterval(() => {
+    state.input.keyState[6] = 1;
+    setTimeout(() => {
+      state.input.keyState[6] = 0;
+    }, interval / 2);
+  }, interval);
+}
+
+export function clearAutoClicker() {
+  if (!autoClickerHandler) return;
+  clearInterval(autoClickerHandler);
+  state.input.keyState[6] = 0;
+}
+
 function handleKeyBindings(playerBody: Body | undefined, core: Core) {
   window.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.key === "r") {
@@ -100,7 +110,7 @@ function handleKeyBindings(playerBody: Body | undefined, core: Core) {
         relatedTarget: null,
         // movementX/Y 不能通过构造器设置（只读），不需要提供
       });
-      document.querySelector('canvas')?.dispatchEvent(e);
+      document.querySelector("canvas")?.dispatchEvent(e);
     }
   });
 }

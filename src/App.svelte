@@ -1,26 +1,32 @@
 <script lang="ts">
-  import { type Player } from "./core";
   import {
     isResolved,
     jetPackSpeedStore,
     playerStore,
     targetIdStore,
     refreshPlayerList,
+    deployAutoClicker,
+    clearAutoClicker,
   } from "./func";
-  import { tick, onMount } from "svelte";
   import Menu from "./components/Menu.svelte";
 
   let propertiesMenu: Menu | undefined;
   let playerMenu: Menu | undefined;
 
-  const propertiesSettings = {
+  type PropertiesSettings = {
+    jetPackSpeed: number;
+    autoClickInterval: number;
+    deployAutoClicker: () => void;
+    clearAutoClicker: () => void;
+  };
+  const propertiesSettings: PropertiesSettings = {
     jetPackSpeed: 1.5,
-    teleport: {
-      x: 128,
-      y: 64,
-      z: 128,
-      teleport: function () {},
+    autoClickInterval: 200,
+    deployAutoClicker: function () {
+      clearAutoClicker();
+      deployAutoClicker(this.autoClickInterval);
     },
+    clearAutoClicker
   };
 
   type SinglePlayerSettings = {
@@ -37,11 +43,11 @@
     players: [],
   };
 
-  var doDisplayMenu = false;
+  var doHideMenu = true;
 
   document.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.key === "Tab") {
-      doDisplayMenu = !doDisplayMenu;
+      doHideMenu = !doHideMenu;
     }
   });
 
@@ -61,6 +67,13 @@
         .onChange((v: number) => {
           jetPackSpeedStore.set(v);
         });
+
+      const autoClickMenu = propertiesMenu.addFolder("AutoClicker");
+      autoClickMenu
+        .add(propertiesSettings, "autoClickInterval", 20, 2000, 10)
+        .name("Interval (ms)");
+      autoClickMenu.add(propertiesSettings, "deployAutoClicker").name("Deploy");
+      autoClickMenu.add(propertiesSettings, "clearAutoClicker").name("Clear all");
 
       //玩家设置
       //@ts-ignore
@@ -105,7 +118,7 @@
 </script>
 
 <main>
-  <div id="root" class:transparent={doDisplayMenu}>
+  <div id="root" class:transparent={doHideMenu}>
     <Menu title="Properties" bind:this={propertiesMenu}></Menu>
     <Menu title="Players" bind:this={playerMenu}></Menu>
   </div>

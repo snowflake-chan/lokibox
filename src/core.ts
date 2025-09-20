@@ -25,6 +25,7 @@ interface Camera {
 }
 interface Input {
   mouseButton: number;
+  keyState: number[];
 }
 export interface Body {
   ax: number;

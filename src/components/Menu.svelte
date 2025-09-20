@@ -90,7 +90,6 @@
 
 <main>
   <div class="menu" bind:this={menu}></div>
-  <div class="lil-gui hidden"></div>
 </main>
 
 <style lang="scss">
