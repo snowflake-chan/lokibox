@@ -24,15 +24,17 @@
   type PropertiesSettings = {
     jetPackSpeed: number;
     autoClickInterval: number;
+    autoClickKey: number;
     deployAutoClicker: () => void;
     clearAutoClicker: () => void;
   };
   const propertiesSettings: PropertiesSettings = {
     jetPackSpeed: 1.5,
     autoClickInterval: 200,
+    autoClickKey: 6,
     deployAutoClicker: function () {
       clearAutoClicker();
-      deployAutoClicker(this.autoClickInterval);
+      deployAutoClicker(this.autoClickInterval, this.autoClickKey);
     },
     clearAutoClicker,
   };
@@ -82,12 +84,16 @@
 
       const autoClickMenu = propertiesMenu.addFolder("AutoClicker");
       autoClickMenu
-        .add(propertiesSettings, "autoClickInterval", 20, 2000, 10)
+        .add(propertiesSettings, "autoClickInterval", 50, 2000, 10)
         .name("Interval (ms)");
+      autoClickMenu
+        .add(propertiesSettings, "autoClickKey", { Left: 6, Right: 7 })
+        .name("Target key");
       autoClickMenu.add(propertiesSettings, "deployAutoClicker").name("Deploy");
       autoClickMenu
         .add(propertiesSettings, "clearAutoClicker")
         .name("Clear all");
+      autoClickMenu.close();
 
       //玩家设置
       //@ts-ignore
@@ -167,14 +173,16 @@
     left: 0;
     right: 0;
     overflow: hidden;
-  }
-  #root.transparent {
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-  }
-  #root:not(.transparent) {
-    opacity: 1;
-    transition: opacity 0.3s;
+
+    &.transparent {
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    &:not(.transparent) {
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
   }
 </style>

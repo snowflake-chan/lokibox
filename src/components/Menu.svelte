@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { GM_getValue, GM_setValue } from "$";
   import GUI from "lil-gui";
   import { onMount } from "svelte";
 
@@ -13,6 +14,12 @@
   let isClick: boolean;
 
   onMount(() => {
+    if (!menu) return;
+
+    const offset = GM_getValue(`menuPos.${title}`, { x: 20, y: 20 });
+    menu.style.left = `${offset.x}px`;
+    menu.style.top = `${offset.y}px`;
+
     gui = new GUI({ container: menu });
     gui.title(title);
 
@@ -68,13 +75,15 @@
 
   function stopDrag(e: MouseEvent) {
     isDragging = false;
-    if (menu) {
-      menu.style.cursor = "grab";
-    }
+    if (!menu) return;
+    menu.style.cursor = "grab";
+    //判断是否为点击
     const distX = startX - e.clientX;
     const distY = startY - e.clientY;
     const dist = distX * distX + distY * distY;
     isClick = dist < 5;
+
+    GM_setValue(`menuPos.${title}`, { x: menu.offsetLeft, y: menu.offsetTop });
   }
 
   export function add(...args: Parameters<GUI["add"]>) {
@@ -95,8 +104,6 @@
 <style lang="scss">
   .menu {
     position: absolute;
-    left: 20px;
-    top: 20px;
     border-radius: 8px;
     overflow: hidden;
     transition:

@@ -18,10 +18,10 @@ const jetPackSpeedStore = writable(1.5);
 const playerStore: Writable<Player[]> = writable([]);
 const targetIdStore: Writable<number | undefined> = writable(undefined);
 
-const shortcut = GM_getValue("shortcut",{
+const shortcut = GM_getValue("shortcut", {
   openMenu: "Tab",
   jetPack: "r",
-})
+});
 
 const shortcutStore: Writable<any> = writable(shortcut);
 
@@ -78,11 +78,11 @@ export function refreshPlayerList() {
 }
 
 var autoClickerHandler: number;
-export function deployAutoClicker(interval: number) {
+export function deployAutoClicker(interval: number, autoClickKey: number = 6) {
   autoClickerHandler = setInterval(() => {
-    state.input.keyState[6] = 1;
+    state.input.keyState[autoClickKey] = 1;
     setTimeout(() => {
-      state.input.keyState[6] = 0;
+      state.input.keyState[autoClickKey] = 0;
     }, interval / 2);
   }, interval);
 }
