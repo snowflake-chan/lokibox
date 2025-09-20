@@ -23,9 +23,6 @@ jetPackSpeedStore.subscribe((v) => {
   jetPackSpeed = v;
 });
 
-var autoAim = false;
-var autoAimTarget: number | undefined;
-
 var state: State;
 
 function refreshPlayerList() {
@@ -59,48 +56,6 @@ getCore().then((v) => {
       state.secret.replica.camera.targetId = playerId;
     }
   });
-
-  //自动瞄准
-  // if (playerBody && autoAim) {
-  //   const selfProxy = new Proxy(playerBody, {
-  //     set(target, property, value) {
-  //       if (autoAimTarget) {
-  //         state.secret.replica.camera.mode = 1;
-  //         if (property === "px" || property === "py" || property === "pz") {
-  //           const t = state.bodies.find(
-  //             (v) => v.id === autoAimTarget
-  //           );
-  //           if (t) {
-  //             state.secret.replica.camera.eye[0] = target.px;
-  //             state.secret.replica.camera.eye[1] = target.py + 2;
-  //             state.secret.replica.camera.eye[2] = target.pz;
-  //             state.secret.replica.camera.target[0] = t.px;
-  //             state.secret.replica.camera.target[1] = t.py;
-  //             state.secret.replica.camera.target[2] = t.pz;
-  //           }
-  //         }
-  //         (target as any)[property] = value;
-  //       }
-  //       return true;
-  //     },
-  //   });
-  //   state.bodies[selfIndex] = selfProxy;
-  // }
-  // (core.game as any).input._handleMouseDown({
-  //   isTrusted: true,
-  //   altKey: false,
-  //   bubbles: true,
-  //   button: 0,
-  //   buttons: 1,
-  //   cancelBubble: false,
-  //   cancelable: true,
-  //   clientX: 499,
-  //   clientY: 375,
-  //   composed: true,
-  //   ctrlKey: false,
-  //   currentTarget: document,
-  //   defaultPrevented: false,
-  // });
 });
 
 export {
@@ -123,18 +78,29 @@ function handleKeyBindings(playerBody: Body | undefined, core: Core) {
       }
     }
     // if (e.key === "l") {
-    //   autoAim = true;
-    //   autoAimTarget = Number(prompt("目标？"));
+    //   console.log("LLL");
+    //   (core.game as any).input.onKeyDown.notify(6);
     // }
-    // if (e.key === "k" && playerBody) {
-    //   playerBody.px = 64;
-    //   playerBody.pz = 8;
-    //   playerBody.py = 6;
-    // }
-    // if (e.key === "j" && playerBody) {
-    //   playerBody.px = 64;
-    //   playerBody.pz = 120;
-    //   playerBody.py = 6;
-    // }
+    if (e.key === "l") {
+      const e = new MouseEvent("mousedown", {
+        bubbles: true, // 是否冒泡 —— 一般 true
+        cancelable: true, // 是否可取消(可preventDefault) —— 一般 true
+        view: window, // 事件视图，通常 window
+        detail: 1, // 点击次数（单击=1，双击=2）
+        screenX: 100, // 屏幕坐标（可选）
+        screenY: 200,
+        clientX: 100, // 视口坐标（必填/常用）
+        clientY: 200,
+        ctrlKey: false,
+        shiftKey: false,
+        altKey: false,
+        metaKey: false,
+        button: 0, // 按钮：0 = 左键, 1 = 中键, 2 = 右键
+        buttons: 1, // 按钮掩码，左键通常是 1
+        relatedTarget: null,
+        // movementX/Y 不能通过构造器设置（只读），不需要提供
+      });
+      document.querySelector('canvas')?.dispatchEvent(e);
+    }
   });
 }
