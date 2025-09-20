@@ -14,7 +14,7 @@ console.log("LokiBox Injected.");
 const DEBUG = true;
 
 const isResolved = writable(false);
-const jetPackSpeedStore = writable(1.5);
+const jetPackSpeedStore = writable(GM_getValue("jetPackSpeed", 1.5));
 const playerStore: Writable<Player[]> = writable([]);
 const targetIdStore: Writable<number | undefined> = writable(undefined);
 
@@ -29,7 +29,7 @@ shortcutStore.subscribe((v) => {
   Object.assign(shortcut, v);
 });
 
-var jetPackSpeed = 1.5;
+var jetPackSpeed = GM_getValue("jetPackSpeed", 1.5);
 
 jetPackSpeedStore.subscribe((v) => {
   jetPackSpeed = v;

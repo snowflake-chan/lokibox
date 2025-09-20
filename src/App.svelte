@@ -29,7 +29,7 @@
     clearAutoClicker: () => void;
   };
   const propertiesSettings: PropertiesSettings = {
-    jetPackSpeed: 1.5,
+    jetPackSpeed: GM_getValue("jetPackSpeed", 1.5),
     autoClickInterval: 200,
     autoClickKey: 6,
     deployAutoClicker: function () {
@@ -83,6 +83,7 @@
         .add(propertiesSettings, "jetPackSpeed", 0.5, 10, 0.5)
         .name("JetPack.Speed")
         .onChange((v: number) => {
+          GM_setValue("jetPackSpeed", v);
           jetPackSpeedStore.set(v);
         });
 
