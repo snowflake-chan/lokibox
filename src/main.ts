@@ -1,6 +1,7 @@
 import { mount } from "svelte";
 //@ts-ignore
 import App from "./App.svelte";
+import "../node_modules/lil-gui/dist/lil-gui.css";
 
 const app = mount(App, {
   target: (() => {

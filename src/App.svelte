@@ -64,6 +64,10 @@
     }
   });
 
+  document.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+  });
+
   isResolved.subscribe(async (v) => {
     if (v) {
       await waitUntil(() => !(!propertiesMenu || !playerMenu || !shortcutMenu));
