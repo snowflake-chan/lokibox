@@ -7,11 +7,18 @@
     refreshPlayerList,
     deployAutoClicker,
     clearAutoClicker,
+    shortcutStore,
   } from "./func";
   import Menu from "./components/Menu.svelte";
 
   let propertiesMenu: Menu | undefined;
   let playerMenu: Menu | undefined;
+  let shortcutMenu: Menu | undefined;
+
+  const shortcut = {
+    openMenu: "Tab",
+    jetPack: "r",
+  };
 
   type PropertiesSettings = {
     jetPackSpeed: number;
@@ -26,7 +33,7 @@
       clearAutoClicker();
       deployAutoClicker(this.autoClickInterval);
     },
-    clearAutoClicker
+    clearAutoClicker,
   };
 
   type SinglePlayerSettings = {
@@ -46,17 +53,21 @@
   var doHideMenu = true;
 
   document.addEventListener("keydown", (e: KeyboardEvent) => {
-    if (e.key === "Tab") {
+    if (e.key === shortcut.openMenu) {
       doHideMenu = !doHideMenu;
+    }
+    if (!doHideMenu && e.key === "Escape") {
+      doHideMenu = true;
     }
   });
 
   isResolved.subscribe(async (v) => {
     if (v) {
-      await waitUntil(() => !(!propertiesMenu || !playerMenu));
+      await waitUntil(() => !(!propertiesMenu || !playerMenu || !shortcutMenu));
       console.log("LokiBox Menu Loaded");
       if (!propertiesMenu) return;
       if (!playerMenu) return;
+      if (!shortcutMenu) return;
 
       //参数设置
       propertiesMenu
@@ -73,7 +84,9 @@
         .add(propertiesSettings, "autoClickInterval", 20, 2000, 10)
         .name("Interval (ms)");
       autoClickMenu.add(propertiesSettings, "deployAutoClicker").name("Deploy");
-      autoClickMenu.add(propertiesSettings, "clearAutoClicker").name("Clear all");
+      autoClickMenu
+        .add(propertiesSettings, "clearAutoClicker")
+        .name("Clear all");
 
       //玩家设置
       //@ts-ignore
@@ -102,6 +115,15 @@
           singlePlayerFolder.close();
         }
       });
+
+      //@ts-ignore
+      shortcutMenu.add(shortcut, "openMenu").name("Open Menu").onChange(updateShortcut);
+      //@ts-ignore
+      shortcutMenu.add(shortcut, "jetPack").name("JetPack").onChange(updateShortcut);
+
+      function updateShortcut(){
+        shortcutStore.set(shortcut);
+      }
     }
   });
 
@@ -121,6 +143,7 @@
   <div id="root" class:transparent={doHideMenu}>
     <Menu title="Properties" bind:this={propertiesMenu}></Menu>
     <Menu title="Players" bind:this={playerMenu}></Menu>
+    <Menu title="Shortcut" bind:this={shortcutMenu}></Menu>
   </div>
 </main>
 
