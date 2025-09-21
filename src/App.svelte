@@ -57,6 +57,8 @@
       }, interval);
     });
   }
+
+  import Radar from "./components/Radar.svelte";
 </script>
 
 <main>
@@ -66,6 +68,7 @@
     <Menu title="Camera" bind:this={cameraMenu}></Menu>
     <Menu title="Shortcut" bind:this={shortcutMenu}></Menu>
   </div>
+  <Radar></Radar>
 </main>
 
 <style lang="scss">
