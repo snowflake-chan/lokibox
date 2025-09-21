@@ -10,7 +10,6 @@ export function mulMat4Vec4(m:number[], v:number[]) {
 export function worldToScreen(pos:number[], camera:Camera) {
   const v = [pos[0], pos[1], pos[2], 1.0];
   const clip = mulMat4Vec4(camera.viewProjection, v);
-  console.log("clip:", clip);
 
 
   if (clip[3] === 0) return null;
@@ -18,7 +17,6 @@ export function worldToScreen(pos:number[], camera:Camera) {
   const ndcX = clip[0] / clip[3];
   const ndcY = clip[1] / clip[3];
   const ndcZ = clip[2] / clip[3];
-console.log("ndc:", ndcX, ndcY, ndcZ);
   // 在摄像机后面
   if (ndcZ < 0) return null;
 
