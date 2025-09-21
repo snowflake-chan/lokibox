@@ -1,16 +1,18 @@
 <script lang="ts">
   import Menu from "./components/Menu.svelte";
   import { GM_getValue } from "$";
-  import { bind as bindProperties } from "src/menus/properties";
-  import { bind as bindPlayers } from "src/menus/players";
+  import { bind as bindMovement } from "src/menus/movement";
+  import { bind as bindCombat } from "src/menus/combat";
+  import { bind as bindCamera } from "src/menus/camera";
   import { bind as bindShortcut } from "src/menus/shortcut";
   import { bind as bindKillAura} from "src/menus/killaura";
   import { defaultShortcut } from "./tools/defaults";
   import { getCore } from "./core";
   import { shortcutStore } from "./functions/shortcut";
 
-  let propertiesMenu: Menu | undefined;
-  let playerMenu: Menu | undefined;
+  let movementMenu: Menu | undefined;
+  let combatMenu: Menu | undefined;
+  let cameraMenu: Menu | undefined;
   let shortcutMenu: Menu | undefined;
   let killauraMenu: Menu | undefined;
 
@@ -37,12 +39,13 @@
   });
 
   getCore().then(async () => {
-    await waitUntil(() => !(!propertiesMenu || !playerMenu || !shortcutMenu || !killauraMenu));
+    await waitUntil(() => !(!movementMenu || !cameraMenu || !shortcutMenu || !killauraMenu));
     console.log("LokiBox Menu Loaded");
-    if (!propertiesMenu || !playerMenu || !shortcutMenu || !killauraMenu) return;
+    if (!movementMenu || !combatMenu || !cameraMenu || !shortcutMenu || !killauraMenu) return;
 
-    bindProperties(propertiesMenu);
-    bindPlayers(playerMenu);
+    bindMovement(movementMenu);
+    bindCombat(combatMenu);
+    bindCamera(cameraMenu);
     bindShortcut(shortcutMenu);
     bindKillAura(killauraMenu);
   });
@@ -61,8 +64,9 @@
 
 <main>
   <div id="root" class:transparent={doHideMenu}>
-    <Menu title="Properties" bind:this={propertiesMenu}></Menu>
-    <Menu title="Players" bind:this={playerMenu}></Menu>
+    <Menu title="Movement" bind:this={movementMenu}></Menu>
+    <Menu title="Combat" bind:this={combatMenu}></Menu>
+    <Menu title="Camera" bind:this={cameraMenu}></Menu>
     <Menu title="Shortcut" bind:this={shortcutMenu}></Menu>
     <Menu title="Combat" bind:this={killauraMenu}></Menu>
   </div>
