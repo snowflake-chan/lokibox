@@ -22,6 +22,7 @@
   "dependencies": {
     "lil-gui": "^0.20.0",
     "path": "^0.12.7",
+    "pixi.js": "^8.13.2",
     "sass-embedded": "^1.92.1",
     "sweetalert2": "^11.23.0",
     "url": "^0.11.4"
