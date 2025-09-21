@@ -1,15 +1,17 @@
 <script lang="ts">
   import Menu from "./components/Menu.svelte";
   import { GM_getValue } from "$";
-  import { bind as bindProperties } from "src/menus/properties";
-  import { bind as bindPlayers } from "src/menus/players";
+  import { bind as bindMovement } from "src/menus/movement";
+  import { bind as bindCombat } from "src/menus/combat";
+  import { bind as bindCamera } from "src/menus/camera";
   import { bind as bindShortcut } from "src/menus/shortcut";
   import { defaultShortcut } from "./tools/defaults";
   import { getCore } from "./core";
   import { shortcutStore } from "./functions/shortcut";
 
-  let propertiesMenu: Menu | undefined;
-  let playerMenu: Menu | undefined;
+  let movementMenu: Menu | undefined;
+  let combatMenu: Menu | undefined;
+  let cameraMenu: Menu | undefined;
   let shortcutMenu: Menu | undefined;
 
   const shortcut = GM_getValue("shortcut", defaultShortcut);
@@ -35,12 +37,13 @@
   });
 
   getCore().then(async () => {
-    await waitUntil(() => !(!propertiesMenu || !playerMenu || !shortcutMenu));
+    await waitUntil(() => !(!movementMenu || !cameraMenu || !shortcutMenu));
     console.log("LokiBox Menu Loaded");
-    if (!propertiesMenu || !playerMenu || !shortcutMenu) return;
+    if (!movementMenu || !combatMenu || !cameraMenu || !shortcutMenu) return;
 
-    bindProperties(propertiesMenu);
-    bindPlayers(playerMenu);
+    bindMovement(movementMenu);
+    bindCombat(combatMenu);
+    bindCamera(cameraMenu);
     bindShortcut(shortcutMenu);
   });
 
@@ -58,8 +61,9 @@
 
 <main>
   <div id="root" class:transparent={doHideMenu}>
-    <Menu title="Properties" bind:this={propertiesMenu}></Menu>
-    <Menu title="Players" bind:this={playerMenu}></Menu>
+    <Menu title="Movement" bind:this={movementMenu}></Menu>
+    <Menu title="Combat" bind:this={combatMenu}></Menu>
+    <Menu title="Camera" bind:this={cameraMenu}></Menu>
     <Menu title="Shortcut" bind:this={shortcutMenu}></Menu>
   </div>
 </main>
