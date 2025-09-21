@@ -13,7 +13,7 @@ declare interface State {
   secret: Secret;
   physics: Physics;
   camera: Camera;
-  playerIndex: object;
+  playerIndex: Record<number, number>;
   replica: StateReplica;
   input: Input;
 }

@@ -45,4 +45,20 @@ export class Quaternion {
       this.z + q.z
     );
   }
+
+  getYaw() {
+    let yaw = Math.atan2(
+      2 * (this.w * this.y + this.z * this.x),
+      1 - 2 * (this.y * this.y + this.z * this.z)
+    );
+
+    // 修正整个方向反转
+    yaw = -yaw + Math.PI; // 左右 + 前后翻转
+
+    // 将范围限制在 -π ~ π
+    if (yaw > Math.PI) yaw -= 2 * Math.PI;
+    if (yaw < -Math.PI) yaw += 2 * Math.PI;
+
+    return yaw; // 单位：弧度
+  }
 }

@@ -5,7 +5,7 @@
   import { bind as bindCombat } from "src/menus/combat";
   import { bind as bindCamera } from "src/menus/camera";
   import { bind as bindShortcut } from "src/menus/shortcut";
-  import { bind as bindKillAura} from "src/menus/killaura";
+  import { bind as bindKillAura } from "src/menus/killaura";
   import { defaultShortcut } from "./tools/defaults";
   import { getCore } from "./core";
   import { shortcutStore } from "./functions/shortcut";
@@ -39,9 +39,18 @@
   });
 
   getCore().then(async () => {
-    await waitUntil(() => !(!movementMenu || !cameraMenu || !shortcutMenu || !killauraMenu));
+    await waitUntil(
+      () => !(!movementMenu || !cameraMenu || !shortcutMenu || !killauraMenu)
+    );
     console.log("LokiBox Menu Loaded");
-    if (!movementMenu || !combatMenu || !cameraMenu || !shortcutMenu || !killauraMenu) return;
+    if (
+      !movementMenu ||
+      !combatMenu ||
+      !cameraMenu ||
+      !shortcutMenu ||
+      !killauraMenu
+    )
+      return;
 
     bindMovement(movementMenu);
     bindCombat(combatMenu);
@@ -60,6 +69,8 @@
       }, interval);
     });
   }
+
+  import Radar from "./components/Radar.svelte";
 </script>
 
 <main>
@@ -70,6 +81,7 @@
     <Menu title="Shortcut" bind:this={shortcutMenu}></Menu>
     <Menu title="Combat" bind:this={killauraMenu}></Menu>
   </div>
+  <Radar></Radar>
 </main>
 
 <style lang="scss">
