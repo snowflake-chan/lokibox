@@ -3,6 +3,10 @@ declare interface Core {
 }
 declare interface Game {
   state: State;
+  input: Input;
+}
+declare interface Input {
+  _applyAxisMovement: (number, number) => void;
 }
 declare interface State {
   bodies: Body[];
@@ -22,6 +26,8 @@ declare interface Physics {
 }
 declare interface Camera {
   rotation: number[];
+  viewport: number[];
+  viewProjection: number[];
 }
 declare interface Input {
   mouseButton: number;
@@ -75,4 +81,3 @@ declare interface Player {
   emissive: number;
   name: string;
 }
-

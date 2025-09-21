@@ -23,10 +23,14 @@ export function bind(menu: Menu) {
     .name("FovY")
     .onChange(setCameraFovY);
   //玩家设置
-  menu
+  const controller = menu
     .add(playerSettings, "target", getPlayerList())
     .name("Target")
     .onChange(setCameraTargetId);
+
+  controller.domElement.addEventListener('click',()=>{
+    controller.options(getPlayerList());
+  });
 }
 
 getCore().then((core) => {

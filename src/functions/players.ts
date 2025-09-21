@@ -5,9 +5,6 @@ console.log("LokiBox Injected.");
 
 const DEBUG = true;
 
-const playerStore: Writable<Player[]> = writable([]);
-
-
 var state: State;
 
 getCore().then((v) => {
@@ -20,14 +17,8 @@ getCore().then((v) => {
 
   const core = v as Core;
   state = core.game.state;
-
-
-  playerStore.set(state.replica.players);
-
-
 });
 
-export { playerStore };
 export function getPlayerList(): Record<string, number> {
   if (state) {
     const playerList: Record<string, number> = {};
