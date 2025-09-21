@@ -5,6 +5,7 @@
   import { bind as bindCombat } from "src/menus/combat";
   import { bind as bindCamera } from "src/menus/camera";
   import { bind as bindShortcut } from "src/menus/shortcut";
+  import { bind as bindKillAura} from "src/menus/killaura";
   import { defaultShortcut } from "./tools/defaults";
   import { getCore } from "./core";
   import { shortcutStore } from "./functions/shortcut";
@@ -13,6 +14,7 @@
   let combatMenu: Menu | undefined;
   let cameraMenu: Menu | undefined;
   let shortcutMenu: Menu | undefined;
+  let killauraMenu: Menu | undefined;
 
   const shortcut = GM_getValue("shortcut", defaultShortcut);
 
@@ -37,14 +39,15 @@
   });
 
   getCore().then(async () => {
-    await waitUntil(() => !(!movementMenu || !cameraMenu || !shortcutMenu));
+    await waitUntil(() => !(!movementMenu || !cameraMenu || !shortcutMenu || !killauraMenu));
     console.log("LokiBox Menu Loaded");
-    if (!movementMenu || !combatMenu || !cameraMenu || !shortcutMenu) return;
+    if (!movementMenu || !combatMenu || !cameraMenu || !shortcutMenu || !killauraMenu) return;
 
     bindMovement(movementMenu);
     bindCombat(combatMenu);
     bindCamera(cameraMenu);
     bindShortcut(shortcutMenu);
+    bindKillAura(killauraMenu);
   });
 
   function waitUntil(condition: () => boolean, interval = 50): Promise<void> {
@@ -65,6 +68,7 @@
     <Menu title="Combat" bind:this={combatMenu}></Menu>
     <Menu title="Camera" bind:this={cameraMenu}></Menu>
     <Menu title="Shortcut" bind:this={shortcutMenu}></Menu>
+    <Menu title="Combat" bind:this={killauraMenu}></Menu>
   </div>
 </main>
 
