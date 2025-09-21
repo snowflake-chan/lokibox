@@ -4,6 +4,7 @@
   import { bind as bindProperties } from "src/menus/properties";
   import { bind as bindPlayers } from "src/menus/players";
   import { bind as bindShortcut } from "src/menus/shortcut";
+  import { bind as bindKillAura} from "src/menus/killaura";
   import { defaultShortcut } from "./tools/defaults";
   import { getCore } from "./core";
   import { shortcutStore } from "./functions/shortcut";
@@ -11,6 +12,7 @@
   let propertiesMenu: Menu | undefined;
   let playerMenu: Menu | undefined;
   let shortcutMenu: Menu | undefined;
+  let killauraMenu: Menu | undefined;
 
   const shortcut = GM_getValue("shortcut", defaultShortcut);
 
@@ -35,13 +37,14 @@
   });
 
   getCore().then(async () => {
-    await waitUntil(() => !(!propertiesMenu || !playerMenu || !shortcutMenu));
+    await waitUntil(() => !(!propertiesMenu || !playerMenu || !shortcutMenu || !killauraMenu));
     console.log("LokiBox Menu Loaded");
-    if (!propertiesMenu || !playerMenu || !shortcutMenu) return;
+    if (!propertiesMenu || !playerMenu || !shortcutMenu || !killauraMenu) return;
 
     bindProperties(propertiesMenu);
     bindPlayers(playerMenu);
     bindShortcut(shortcutMenu);
+    bindKillAura(killauraMenu);
   });
 
   function waitUntil(condition: () => boolean, interval = 50): Promise<void> {
@@ -61,6 +64,7 @@
     <Menu title="Properties" bind:this={propertiesMenu}></Menu>
     <Menu title="Players" bind:this={playerMenu}></Menu>
     <Menu title="Shortcut" bind:this={shortcutMenu}></Menu>
+    <Menu title="Combat" bind:this={killauraMenu}></Menu>
   </div>
 </main>
 
