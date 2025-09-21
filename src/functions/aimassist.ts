@@ -75,7 +75,7 @@ export function deployAimAssist() {
 }
 
 window.addEventListener("keydown", (e) => {
-  if (e.key === ";" && targetId) {
+  if (e.key === "o" && targetId) {
     blackList.push(targetId);
     console.log(`Added ${targetId} to blacklist`);
   }

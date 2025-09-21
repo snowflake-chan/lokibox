@@ -1,8 +1,8 @@
 import { clearAutoClicker, deployAutoClicker } from "src/functions/autoclicker";
 import Menu from "src/components/Menu.svelte";
-import { 
-  clearAimAssist, 
-  deployAimAssist, 
+import {
+  clearAimAssist,
+  deployAimAssist,
   AimMode,
   setAimMode,
   setAimTarget,
@@ -10,6 +10,7 @@ import {
   setAimStrength,
 } from "src/functions/aimassist";
 import { getPlayerList } from "src/functions/players";
+import { deployKillAura, clearKillAura } from "src/functions/killaura";
 
 const autoClickSettings = {
   interval: 200,
@@ -34,7 +35,7 @@ const aimAssistSettings = {
     clearAimAssist();
     deployAimAssist();
   },
-  clear: clearAimAssist
+  clear: clearAimAssist,
 };
 
 export function bind(menu: Menu) {
@@ -53,35 +54,35 @@ export function bind(menu: Menu) {
 
   const aimAssistMenu = menu.addFolder("AimAssist");
   const modeController = aimAssistMenu
-    .add(aimAssistSettings, "mode", { 
-      "Target Mode": AimMode.TARGET, 
-      "Range Mode": AimMode.RANGE 
+    .add(aimAssistSettings, "mode", {
+      "Target Mode": AimMode.TARGET,
+      "Range Mode": AimMode.RANGE,
     })
     .name("Mode");
-  
+
   let targetController: any = null;
   let rangeController: any = null;
-  
+
   aimAssistMenu
     .add(aimAssistSettings, "strength", 0.01, 1, 0.01)
     .name("Strength");
-  
+
   function updateControls() {
     if (targetController) {
       targetController.destroy();
       targetController = null;
     }
-    
+
     if (rangeController) {
       rangeController.destroy();
       rangeController = null;
     }
-    
+
     if (aimAssistSettings.mode === AimMode.TARGET) {
       targetController = aimAssistMenu
         .add(aimAssistSettings, "target", getPlayerList())
         .name("Target");
-      
+
       targetController.domElement.addEventListener("click", () => {
         targetController.options(getPlayerList());
       });
@@ -91,13 +92,23 @@ export function bind(menu: Menu) {
         .name("Range");
     }
   }
-  
+
   updateControls();
-  
+
   modeController.onChange(() => {
     updateControls();
   });
-  
+
   aimAssistMenu.add(aimAssistSettings, "deploy").name("Deploy");
   aimAssistMenu.add(aimAssistSettings, "clear").name("Clear");
+
+  const killauraFolder = menu.addFolder("InfiniteAura");
+
+  const controls = {
+    deploy: deployKillAura,
+    clear: clearKillAura,
+  };
+
+  killauraFolder.add(controls, "deploy").name("Deploy");
+  killauraFolder.add(controls, "clear").name("Clear");
 }

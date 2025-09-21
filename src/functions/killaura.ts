@@ -13,38 +13,12 @@ getCore().then((core) => {
   playerId = state.secret.id;
 });
 
-function findPlayersInRange(range: number): Player[] {
-  if (!state) return [];
-
-  const players: Player[] = [];
-  const playerPos = state.bodies.find(v => v.id === playerId);
-
-  if (!playerPos) return players;
-
-  for (const player of state.replica.players) {
-    if (player.id === playerId) continue;
-
-    const targetBody = state.bodies.find(v => v.id === player.id);
-    if (!targetBody) continue;
-
-    const dx = playerPos.px - targetBody.px;
-    const dy = playerPos.py - targetBody.py;
-    const dz = playerPos.pz - targetBody.pz;
-    const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-    if (distance <= range) {
-      players.push(player);
-    }
-  }
-
-  return players;
-}
 
 export function deployKillAura() {
   deployAutoClicker(100, 6);
 
   checkInterval = window.setInterval(() => {
-    const players = findPlayersInRange(5);
+    const players = state.bodies.filter((v) => state.playerIndex[v.id]);
 
     if (players.length > 0) {
       setCameraTargetId(players[targetIndex].id);
