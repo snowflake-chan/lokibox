@@ -1,6 +1,6 @@
 import { getCore } from "../core";
 import { GM_getValue, GM_setValue } from "$";
-import { targetIdStore } from "./camera";
+import { setCameraTargetId } from "./camera";
 import { deployAutoClicker, clearAutoClicker } from "./autoclicker";
 
 let state: State;
@@ -47,11 +47,11 @@ export function deployKillAura() {
     const players = findPlayersInRange(5);
 
     if (players.length > 0) {
-      targetIdStore.set(players[targetIndex].id);
+      setCameraTargetId(players[targetIndex].id);
       targetIndex = (targetIndex + 1) % players.length;
     } else {
       clearAutoClicker();
-      targetIdStore.set(playerId);
+      setCameraTargetId(playerId);
       targetIndex = 0;
     }
   }, 500);
@@ -64,6 +64,6 @@ export function clearKillAura() {
   }
 
   clearAutoClicker();
-  targetIdStore.set(playerId);
+  setCameraTargetId(playerId);
   targetIndex = 0;
 }
