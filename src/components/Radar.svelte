@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { Application, Graphics, Container } from "pixi.js";
   import { getCore } from "src/core";
   import { Quaternion } from "src/tools/quaternion";
@@ -56,7 +56,7 @@
 
   function drawPlayerArrow(g: Graphics) {
     g.clear();
-    g.beginFill(0xffffff);
+    g.beginFill(0xffffff, 0.7);
     g.moveTo(0, -8);
     g.lineTo(6, 6);
     g.lineTo(-6, 6);
@@ -67,7 +67,9 @@
   function updateRadar() {
     if (!app) return;
     if (state) {
-      enemies = state.bodies.filter((v) => state.playerIndex[v.id]);
+      enemies = state.bodies.filter((v) => {
+        if (v.id != player.id) return state.playerIndex[v.id];
+      });
     }
 
     // 计算最远敌人距离，用于动态缩放
@@ -99,7 +101,7 @@
       const ry = dx * sin + dy * cos;
 
       const dot = new Graphics();
-      dot.beginFill(0xffffff);
+      dot.beginFill(0xcc0000, 0.7);
       dot.drawCircle(0, 0, 4);
       dot.endFill();
       dot.x = radarSize / 2 + rx * worldScale;
@@ -123,9 +125,27 @@
     if (!body) return;
     player = body;
   });
+
+  let coords = "";
+
+  const updateCoords = () => {
+    coords = `(${player.px.toFixed(2)}, ${player.py.toFixed(2)}, ${player.pz.toFixed(2)})`;
+  };
+
+  // 定时刷新
+  const interval = setInterval(updateCoords, 50);
+
+  onDestroy(() => clearInterval(interval));
 </script>
 
-<div bind:this={container} id="radar"></div>
+<div id="radar-container">
+  <div bind:this={container} id="radar"></div>
+  {#if player}
+    <div id="coordinates">
+      {coords}
+    </div>
+  {/if}
+</div>
 
 <style lang="scss">
   #radar {
@@ -135,5 +155,24 @@
     height: 200px;
     z-index: 998;
     top: 0;
+  }
+
+  #radar-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 998;
+  }
+
+  #coordinates {
+    position: absolute;
+    top: 205px;
+    font-size: medium;
+    z-index: 998;
+    color: white;
   }
 </style>

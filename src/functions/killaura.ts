@@ -15,7 +15,7 @@ getCore().then((core) => {
 
 
 export function deployKillAura() {
-  deployAutoClicker(100, 6);
+  deployAutoClicker(50, 6);
 
   checkInterval = window.setInterval(() => {
     const players = state.bodies.filter((v) => state.playerIndex[v.id]);
