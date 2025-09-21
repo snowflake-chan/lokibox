@@ -2,16 +2,21 @@
   import Menu from "./components/Menu.svelte";
   import { GM_getValue } from "$";
   import { bind as bindProperties } from "src/menus/properties";
-  import { bind as bindPlayers} from "src/menus/players";
+  import { bind as bindPlayers } from "src/menus/players";
   import { bind as bindShortcut } from "src/menus/shortcut";
   import { defaultShortcut } from "./tools/defaults";
   import { getCore } from "./core";
+  import { shortcutStore } from "./functions/shortcut";
 
   let propertiesMenu: Menu | undefined;
   let playerMenu: Menu | undefined;
   let shortcutMenu: Menu | undefined;
 
   const shortcut = GM_getValue("shortcut", defaultShortcut);
+
+  shortcutStore.subscribe((v) => {
+    Object.assign(shortcut, v);
+  });
 
   var doHideMenu = true;
 

@@ -44,5 +44,4 @@ export function bind(menu: Menu) {
 
   autoClickMenu.add(propertiesSettings, "deployAutoClicker").name("Deploy");
   autoClickMenu.add(propertiesSettings, "clearAutoClicker").name("Clear all");
-  autoClickMenu.close();
 }
