@@ -16,6 +16,10 @@ declare interface State {
   playerIndex: Record<number, number>;
   replica: StateReplica;
   input: Input;
+  voxel: StateVoxel;
+}
+declare interface StateVoxel {
+  shape: [number, number, number];
 }
 declare interface Secret {
   id: number;
