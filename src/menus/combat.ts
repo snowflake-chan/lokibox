@@ -11,6 +11,7 @@ import {
 } from "src/functions/aimassist";
 import { getPlayerList } from "src/functions/players";
 import { deployKillAura, clearKillAura } from "src/functions/killaura";
+import { bedFucker } from "src/functions/bedfucker";
 
 const autoClickSettings = {
   interval: 200,
@@ -20,7 +21,11 @@ const autoClickSettings = {
     deployAutoClicker(this.interval, this.key);
   },
   clear: clearAutoClicker,
+ 
 };
+const miscSettings = {
+   bedFucker
+}
 
 const aimAssistSettings = {
   mode: AimMode.TARGET,
@@ -111,4 +116,6 @@ export function bind(menu: Menu) {
 
   killauraFolder.add(controls, "deploy").name("Deploy");
   killauraFolder.add(controls, "clear").name("Clear");
+
+  menu.addFolder('Misc').add(miscSettings, "bedFucker");
 }
