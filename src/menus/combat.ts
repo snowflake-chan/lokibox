@@ -126,5 +126,5 @@ export function bind(menu: Menu) {
   killauraFolder.add(controls, "deploy").name("Deploy");
   killauraFolder.add(controls, "clear").name("Clear");
 
-  menu.addFolder("Misc").add(miscSettings, "bedFucker");
+  menu.addFolder("Misc").add(miscSettings, "bedFucker").name("BedFucker");
 }
