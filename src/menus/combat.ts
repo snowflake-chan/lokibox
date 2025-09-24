@@ -8,6 +8,7 @@ import {
   setAimTarget,
   setAimRange,
   setAimStrength,
+  clearBlacklist,
 } from "src/functions/aimassist";
 import { getPlayerList } from "src/functions/players";
 import { deployKillAura, clearKillAura } from "src/functions/killaura";
@@ -21,11 +22,10 @@ const autoClickSettings = {
     deployAutoClicker(this.interval, this.key);
   },
   clear: clearAutoClicker,
- 
 };
 const miscSettings = {
-   bedFucker
-}
+  bedFucker,
+};
 
 const aimAssistSettings = {
   mode: AimMode.TARGET,
@@ -41,6 +41,7 @@ const aimAssistSettings = {
     deployAimAssist();
   },
   clear: clearAimAssist,
+  clearBlacklist,
 };
 
 export function bind(menu: Menu) {
@@ -67,6 +68,7 @@ export function bind(menu: Menu) {
 
   let targetController: any = null;
   let rangeController: any = null;
+  let clearBLController: any = null;
 
   aimAssistMenu
     .add(aimAssistSettings, "strength", 0.01, 1, 0.01)
@@ -81,6 +83,9 @@ export function bind(menu: Menu) {
     if (rangeController) {
       rangeController.destroy();
       rangeController = null;
+
+      clearBLController.destroy();
+      clearBLController = null;
     }
 
     if (aimAssistSettings.mode === AimMode.TARGET) {
@@ -95,6 +100,10 @@ export function bind(menu: Menu) {
       rangeController = aimAssistMenu
         .add(aimAssistSettings, "range", 1, 20, 1)
         .name("Range");
+
+      clearBLController = aimAssistMenu
+        .add(aimAssistSettings, "clearBlacklist")
+        .name("Clear Blacklist");
     }
   }
 
@@ -117,5 +126,5 @@ export function bind(menu: Menu) {
   killauraFolder.add(controls, "deploy").name("Deploy");
   killauraFolder.add(controls, "clear").name("Clear");
 
-  menu.addFolder('Misc').add(miscSettings, "bedFucker");
+  menu.addFolder("Misc").add(miscSettings, "bedFucker");
 }
