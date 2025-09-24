@@ -75,12 +75,15 @@ export function deployAimAssist() {
         const dx = screenPos.x - camera.viewport[0] / 2;
         const dy = screenPos.y - camera.viewport[1] / 2;
 
-        coreService.getCore().then((coreInstance) => {
-          coreInstance.game.input._applyAxisMovement(
-            dx * currentStrength,
-            dy * currentStrength
-          );
-        }).catch(console.error);
+        coreService
+          .getCore()
+          .then((coreInstance) => {
+            coreInstance.game.input._applyAxisMovement(
+              dx * currentStrength,
+              dy * currentStrength
+            );
+          })
+          .catch(console.error);
       }
     } catch (error) {
       console.error("Aim assist tick error:", error);
@@ -90,7 +93,7 @@ export function deployAimAssist() {
 }
 
 window.addEventListener("keydown", (e) => {
-  console.log(e.key, targetId)
+  console.log(e.key, targetId);
   if (e.key === "o" && targetId) {
     blackList.push(targetId);
     console.log(`Added ${targetId} to blacklist`);
@@ -118,4 +121,8 @@ export function setAimRange(range: number) {
 
 export function setAimStrength(strength: number) {
   currentStrength = strength;
+}
+
+export function clearBlacklist() {
+  blackList.length = 0;
 }

@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "v*"   # 例如 v1.0.0 时触发
+  workflow_dispatch:
 
 jobs:
   build-and-publish:
@@ -20,13 +21,11 @@ jobs:
           cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Install pnpm
+      - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9 # 或你项目里用的版本
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          version: 9
+          run_install: true
 
       - name: Build project
         run: pnpm build
