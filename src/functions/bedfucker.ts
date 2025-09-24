@@ -1,17 +1,12 @@
-import { getCore } from "src/core";
+import { coreService } from "src/services/coreService";
 
 const y = 41.5;
 const x1 = 192.5;
 const x2 = 59.5;
 const z = 127;
 
-var state: State;
-
-getCore().then((core) => {
-  state = (core as Core).game.state;
-});
-
-export function bedFucker() {
+export async function bedFucker() {
+  const state = await coreService.getState();
   const eye = state.secret.replica.camera.eye;
   const target = state.secret.replica.camera.target;
   state.secret.replica.camera.mode = 1;
@@ -19,20 +14,20 @@ export function bedFucker() {
   target[1] = y;
   setTimeout(() => {
     eye[0] = x1;
-    target[0] = x1+1;
+    target[0] = x1 + 1;
     eye[2] = z;
     setTimeout(() => {
       eye[0] = x2;
-      target[0] = x2+1;
+      target[0] = x2 + 1;
       eye[2] = z;
       setTimeout(() => {
         eye[0] = z;
         eye[2] = x1;
-        target[2] = x1+1;
+        target[2] = x1 + 1;
         setTimeout(() => {
           eye[0] = z;
           eye[2] = x2;
-          target[2] = x2+1;
+          target[2] = x2 + 1;
           setTimeout(() => {
             state.secret.replica.camera.mode = 2;
           }, 3000);

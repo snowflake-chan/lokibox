@@ -1,9 +1,10 @@
 import Menu from "src/components/Menu.svelte";
-import { getCore } from "src/core";
+import { coreService } from "src/services/coreService";
 import {
   setCameraFovY,
   setCameraMode,
   setCameraTargetId,
+  getPlayerId,
 } from "src/functions/camera";
 import { getPlayerList } from "src/functions/players";
 
@@ -22,20 +23,30 @@ export function bind(menu: Menu) {
     .add(playerSettings, "fovY", 0, 1, 0.01)
     .name("FovY")
     .onChange(setCameraFovY);
-  //玩家设置
+
   const controller = menu
     .add(playerSettings, "target", getPlayerList())
     .name("Target")
     .onChange(setCameraTargetId);
 
-  controller.domElement.addEventListener('click',()=>{
+  menu.add({
+    backToMe: () => {
+      const playerId = getPlayerId();
+      if (playerId) {
+        setCameraTargetId(playerId);
+        playerSettings.target = playerId;
+      }
+    }
+  }, 'backToMe').name('Back To Me');
+
+  controller.domElement.addEventListener('click', () => {
     controller.options(getPlayerList());
   });
-}
 
-getCore().then((core) => {
-  const camera = (core as Core).game.state.secret.replica.camera;
-  playerSettings.mode = camera.mode;
-  playerSettings.fovY = camera.fovY;
-  playerSettings.target = camera.targetId;
-});
+  coreService.getCore().then((core) => {
+    const camera = core.game.state.secret.replica.camera;
+    playerSettings.mode = camera.mode;
+    playerSettings.fovY = camera.fovY;
+    playerSettings.target = camera.targetId;
+  });
+}

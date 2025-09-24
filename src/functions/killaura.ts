@@ -1,34 +1,39 @@
-import { getCore } from "../core";
+import { coreService } from "src/services/coreService";
 import { GM_getValue, GM_setValue } from "$";
 import { setCameraTargetId } from "./camera";
 import { deployAutoClicker, clearAutoClicker } from "./autoclicker";
 
-let state: State;
-let playerId: number;
 let checkInterval: number | null = null;
 let targetIndex: number = 0;
 
-getCore().then((core) => {
-  state = (core as Core).game.state;
-  playerId = state.secret.id;
-});
-
-
 export function deployKillAura() {
-  deployAutoClicker(50, 6);
+  try {
+    const state = coreService.getStateSync();
+    const playerId = state.secret.id;
+    
+    deployAutoClicker(50, 6);
 
-  checkInterval = window.setInterval(() => {
-    const players = state.bodies.filter((v) => state.playerIndex[v.id]);
+    checkInterval = window.setInterval(() => {
+      try {
+        const currentState = coreService.getStateSync();
+        const players = currentState.bodies.filter((v) => currentState.playerIndex[v.id]);
 
-    if (players.length > 0) {
-      setCameraTargetId(players[targetIndex].id);
-      targetIndex = (targetIndex + 1) % players.length;
-    } else {
-      clearAutoClicker();
-      setCameraTargetId(playerId);
-      targetIndex = 0;
-    }
-  }, 500);
+        if (players.length > 0) {
+          setCameraTargetId(players[targetIndex].id);
+          targetIndex = (targetIndex + 1) % players.length;
+        } else {
+          clearAutoClicker();
+          setCameraTargetId(playerId);
+          targetIndex = 0;
+        }
+      } catch (error) {
+        console.error("Kill aura tick error:", error);
+        clearKillAura();
+      }
+    }, 500);
+  } catch (error) {
+    console.error("Deploy kill aura failed - core not initialized:", error);
+  }
 }
 
 export function clearKillAura() {
@@ -36,8 +41,14 @@ export function clearKillAura() {
     clearInterval(checkInterval);
     checkInterval = null;
   }
-
   clearAutoClicker();
-  setCameraTargetId(playerId);
+  try {
+    const state = coreService.getStateSync();
+    const playerId = state.secret.id;
+    setCameraTargetId(playerId);
+  } catch (error) {
+    console.error("Clear kill aura failed:", error);
+  }
+  
   targetIndex = 0;
 }
