@@ -26,6 +26,8 @@ jobs:
         with:
           version: 9   # 或者改成你项目用的版本
 
+      - run: which pnpm && pnpm --version
+
       # 3. 装依赖
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
