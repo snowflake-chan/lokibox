@@ -1,32 +1,23 @@
-import { writable, type Writable } from "svelte/store";
-import { getCore } from "../core";
-
-console.log("LokiBox Injected.");
+import { coreService } from "src/services/coreService";
 
 const DEBUG = true;
 
-var state: State;
-
-getCore().then((v) => {
-  console.log("LokiBox Resolved.");
-
-  if (DEBUG) {
-    (window as unknown as any).core = v;
-    console.warn("[WARNING] DEBUGGING");
-  }
-
-  const core = v as Core;
-  state = core.game.state;
-});
+if (DEBUG) {
+  coreService.onReady((core) => {
+    try {
+      (window as unknown as any).core = core;
+      console.warn("[WARNING] DEBUGGING: core exposed on window");
+    } catch (e) {
+      console.log(e);
+    }
+  });
+}
 
 export function getPlayerList(): Record<string, number> {
-  if (state) {
-    const playerList: Record<string, number> = {};
-    for (const i of state.replica.players) {
-      playerList[i.name] = i.id;
-    }
-    return playerList;
-  } else {
-    return {};
+  const state = coreService.getStateSync();
+  const playerList: Record<string, number> = {};
+  for (const p of state.replica.players) {
+    playerList[p.name] = p.id;
   }
+  return playerList;
 }

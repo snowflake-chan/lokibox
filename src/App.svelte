@@ -6,45 +6,57 @@
   import { bind as bindCamera } from "src/menus/camera";
   import { bind as bindShortcut } from "src/menus/shortcut";
   import { defaultShortcut } from "./tools/defaults";
-  import { getCore } from "./core";
-  import { shortcutStore } from "./functions/shortcut";
+  import { coreService } from "src/services/coreService";
+  import { shortcutStore } from "src/functions/shortcut";
+  import { onMount, onDestroy } from "svelte";
 
   let movementMenu: Menu | undefined;
   let combatMenu: Menu | undefined;
   let cameraMenu: Menu | undefined;
   let shortcutMenu: Menu | undefined;
+  let shortcut = GM_getValue("shortcut", defaultShortcut);
 
-  const shortcut = GM_getValue("shortcut", defaultShortcut);
-
-  shortcutStore.subscribe((v) => {
+  const unsubShortcut = shortcutStore.subscribe((v) => {
     Object.assign(shortcut, v);
   });
 
-  var doHideMenu = true;
+  let doHideMenu = true;
 
-  document.addEventListener("keydown", (e: KeyboardEvent) => {
+  function handleKeydown(e: KeyboardEvent) {
     if (e.key === shortcut.openMenu) {
       doHideMenu = !doHideMenu;
-      document.exitPointerLock();
+      (document as any).exitPointerLock?.();
     }
     if (!doHideMenu && e.key === "Escape") {
       doHideMenu = true;
     }
-  });
+  }
 
-  document.addEventListener("contextmenu", (e) => {
+  function preventContext(e: Event) {
     e.preventDefault();
+  }
+
+  onMount(() => {
+    document.addEventListener("keydown", handleKeydown);
+    document.addEventListener("contextmenu", preventContext);
+    coreService.getCore().then(async () => {
+      await waitUntil(() => !(!movementMenu || !cameraMenu || !shortcutMenu));
+      console.log("LokiBox Menu Loaded");
+      if (!movementMenu || !combatMenu || !cameraMenu || !shortcutMenu) return;
+
+      bindMovement(movementMenu);
+      bindCombat(combatMenu);
+      bindCamera(cameraMenu);
+      bindShortcut(shortcutMenu);
+    }).catch((e) => {
+      console.warn("coreService initialization failed:", e);
+    });
   });
 
-  getCore().then(async () => {
-    await waitUntil(() => !(!movementMenu || !cameraMenu || !shortcutMenu));
-    console.log("LokiBox Menu Loaded");
-    if (!movementMenu || !combatMenu || !cameraMenu || !shortcutMenu) return;
-
-    bindMovement(movementMenu);
-    bindCombat(combatMenu);
-    bindCamera(cameraMenu);
-    bindShortcut(shortcutMenu);
+  onDestroy(() => {
+    document.removeEventListener("keydown", handleKeydown);
+    document.removeEventListener("contextmenu", preventContext);
+    unsubShortcut();
   });
 
   function waitUntil(condition: () => boolean, interval = 50): Promise<void> {
