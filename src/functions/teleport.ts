@@ -1,10 +1,4 @@
-import { getCore } from "src/core";
 import { getSelfBody } from "src/tools/arch";
-
-var state: State;
-getCore().then((core) => {
-  state = (core as Core).game.state;
-});
 
 export function teleport(x: number, y: number, z: number) {
   const body = getSelfBody();

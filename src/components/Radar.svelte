@@ -1,15 +1,12 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { Application, Graphics, Container } from "pixi.js";
-  import { coreService } from "src/services/coreService";
-  import { Quaternion } from "src/tools/quaternion";
+  import { getCameraRotation, getOthersBodies, getSelfBody } from "src/tools/arch";
 
   let container: HTMLDivElement;
   let app: Application | null = null;
 
-  let player: Body | null = null;
-  let state: State | null = null;
-  let camera: Camera | null = null;
+  let player: Body = getSelfBody();
   let enemies: Body[] = [];
 
   const radarSize = 200;
@@ -20,8 +17,6 @@
   let playerArrow: Graphics | null = null;
   let enemyDots: Graphics[] = [];
   let worldContainer: Container | null = null;
-
-  let unsubState: (() => void) | null = null;
 
   onMount(async () => {
     app = new Application();
@@ -51,21 +46,8 @@
     playerArrow.rotation = 0;
     app.stage.addChild(playerArrow);
 
-    unsubState = coreService.subscribeState((s) => {
-      state = s;
-      camera = s.camera;
-      const playerId = s.secret.id;
-      player = s.bodies.find((v) => v.id === playerId) ?? null;
-    });
-
-    coreService.getCore().catch(console.error);
-
     app.ticker.add(() => {
-      try {
-        updateRadar();
-      } catch (e) {
-        console.warn("Radar update error:", e);
-      }
+      updateRadar();
     });
   });
 
@@ -80,11 +62,9 @@
   }
 
   function updateRadar() {
-    if (!app || !state || !player || !camera) return;
-    
-    enemies = state.bodies.filter((v) => {
-      return v.id !== player!.id && state!.playerIndex[v.id];
-    });
+    if (!app) return;
+
+    enemies = getOthersBodies();
 
     let maxDistance = 50;
     if (enemies.length > 0) {
@@ -104,7 +84,7 @@
     enemies.forEach((e) => {
       const dx = e.px - player!.px;
       const dy = e.pz - player!.pz;
-      const yaw = Quaternion.parseArray(camera!.rotation).getYaw();
+      const yaw = getCameraRotation().getYaw();
       const cos = Math.cos(-yaw);
       const sin = Math.sin(-yaw);
       const rx = dx * cos - dy * sin;
@@ -147,7 +127,6 @@
     }
     enemyDots.forEach((dot) => dot.destroy());
     clearInterval(coordInterval);
-    unsubState?.();
   });
 </script>
 

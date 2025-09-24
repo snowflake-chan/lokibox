@@ -36,4 +36,11 @@ export class Vector3 {
   scale(times: number) {
     return new Vector3(this.x * times, this.y * times, this.z * times);
   }
+
+  dist(v: Vector3) {
+    const dx = this.x - v.x;
+    const dy = this.y - v.y;
+    const dz = this.z - v.z;
+    return dx * dx + dy * dy + dz * dz;
+  }
 }

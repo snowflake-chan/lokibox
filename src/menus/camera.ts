@@ -1,12 +1,14 @@
 import Menu from "src/components/Menu.svelte";
-import { coreService } from "src/services/coreService";
 import {
   setCameraFovY,
   setCameraMode,
   setCameraTargetId,
   getPlayerId,
-} from "src/functions/camera";
-import { getPlayerList } from "src/functions/players";
+  getCameraMode,
+  getCameraFovY,
+  getCameraTargetId,
+} from "src/tools/arch";
+import { getPlayerMap } from "src/tools/arch";
 
 const playerSettings = {
   mode: 0,
@@ -25,28 +27,29 @@ export function bind(menu: Menu) {
     .onChange(setCameraFovY);
 
   const controller = menu
-    .add(playerSettings, "target", getPlayerList())
+    .add(playerSettings, "target", getPlayerMap())
     .name("Target")
     .onChange(setCameraTargetId);
 
-  menu.add({
-    backToMe: () => {
-      const playerId = getPlayerId();
-      if (playerId) {
-        setCameraTargetId(playerId);
-        playerSettings.target = playerId;
-      }
-    }
-  }, 'backToMe').name('Back To Me');
+  menu
+    .add(
+      {
+        backToMe: () => {
+          const playerId = getPlayerId();
+          if (playerId) {
+            setCameraTargetId(playerId);
+            playerSettings.target = playerId;
+          }
+        },
+      },
+      "backToMe"
+    )
+    .name("Back To Me");
 
-  controller.domElement.addEventListener('click', () => {
-    controller.options(getPlayerList());
+  controller.domElement.addEventListener("click", () => {
+    controller.options(getPlayerMap());
   });
-
-  coreService.getCore().then((core) => {
-    const camera = core.game.state.secret.replica.camera;
-    playerSettings.mode = camera.mode;
-    playerSettings.fovY = camera.fovY;
-    playerSettings.target = camera.targetId;
-  });
+  playerSettings.mode = getCameraMode();
+  playerSettings.fovY = getCameraFovY();
+  playerSettings.target = getCameraTargetId();
 }

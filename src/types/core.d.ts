@@ -30,7 +30,7 @@ declare interface Physics {
 }
 declare interface Camera {
   rotation: number[];
-  viewport: number[];
+  viewport: [number, number];
   viewProjection: number[];
 }
 declare interface Input {
@@ -84,4 +84,12 @@ declare interface Player {
   id: number;
   emissive: number;
   name: string;
+}
+enum CameraMode {
+  FOLLOW = 0,
+  FIXED,
+  FPS,
+}
+enum GameKey{
+  ACTION0=6, ACTION1
 }

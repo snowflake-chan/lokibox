@@ -10,8 +10,7 @@ import {
   setAimStrength,
   clearBlacklist,
 } from "src/functions/aimassist";
-import { getPlayerList } from "src/functions/players";
-import { deployKillAura, clearKillAura } from "src/functions/killaura";
+import { getPlayerMap } from "src/tools/arch";
 import { bedFucker } from "src/functions/bedfucker";
 
 const autoClickSettings = {
@@ -90,11 +89,11 @@ export function bind(menu: Menu) {
 
     if (aimAssistSettings.mode === AimMode.TARGET) {
       targetController = aimAssistMenu
-        .add(aimAssistSettings, "target", getPlayerList())
+        .add(aimAssistSettings, "target", getPlayerMap())
         .name("Target");
 
       targetController.domElement.addEventListener("click", () => {
-        targetController.options(getPlayerList());
+        targetController.options(getPlayerMap());
       });
     } else if (aimAssistSettings.mode === AimMode.RANGE) {
       rangeController = aimAssistMenu
@@ -115,16 +114,6 @@ export function bind(menu: Menu) {
 
   aimAssistMenu.add(aimAssistSettings, "deploy").name("Deploy");
   aimAssistMenu.add(aimAssistSettings, "clear").name("Clear");
-
-  const killauraFolder = menu.addFolder("InfiniteAura");
-
-  const controls = {
-    deploy: deployKillAura,
-    clear: clearKillAura,
-  };
-
-  killauraFolder.add(controls, "deploy").name("Deploy");
-  killauraFolder.add(controls, "clear").name("Clear");
 
   menu.addFolder("Misc").add(miscSettings, "bedFucker").name("BedFucker");
 }

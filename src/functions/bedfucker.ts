@@ -1,38 +1,41 @@
-import { coreService } from "src/services/coreService";
+import { getCameraMode, setCameraEye, setCameraMode, setCameraTarget } from "src/tools/arch";
 
 const y = 41.5;
 const x1 = 192.5;
 const x2 = 59.5;
 const z = 127;
 
-export async function bedFucker() {
-  const state = await coreService.getState();
-  const eye = state.secret.replica.camera.eye;
-  const target = state.secret.replica.camera.target;
-  state.secret.replica.camera.mode = 1;
-  eye[1] = y;
-  target[1] = y;
-  setTimeout(() => {
-    eye[0] = x1;
-    target[0] = x1 + 1;
-    eye[2] = z;
+export function bedFucker() {
+  const originalMode = getCameraMode();
+  setCameraMode(CameraMode.FPS);
+  setCameraTarget(z, y, z);
+  doInSequence(
+    [
+      () => {
+        setCameraEye(x1, y, z);
+      },
+      () => {
+        setCameraEye(x2, y, z);
+      },
+      () => {
+        setCameraEye(z, y, x1);
+      },
+      () => {
+        setCameraEye(z, y, x2);
+      },
+    ],
+    3000
+  ).then(()=>{
+    setCameraMode(originalMode);
+  });
+}
+
+function doInSequence(tasks: (() => void)[], interval: number):Promise<void> {
+  return new Promise((resolve) => {
+    if (tasks.length === 0) resolve();
     setTimeout(() => {
-      eye[0] = x2;
-      target[0] = x2 + 1;
-      eye[2] = z;
-      setTimeout(() => {
-        eye[0] = z;
-        eye[2] = x1;
-        target[2] = x1 + 1;
-        setTimeout(() => {
-          eye[0] = z;
-          eye[2] = x2;
-          target[2] = x2 + 1;
-          setTimeout(() => {
-            state.secret.replica.camera.mode = 2;
-          }, 3000);
-        }, 3000);
-      }, 3000);
-    }, 3000);
-  }, 3000);
+      tasks[0]();
+      doInSequence(tasks.slice(1, -1), interval);
+    }, interval);
+  });
 }

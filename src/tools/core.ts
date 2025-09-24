@@ -25,12 +25,17 @@ function listenPrototype(param: string) {
   });
 }
 
-export function getCore() {
+export function getCore(): Promise<Core> {
+  let param: string;
   if (window.location.pathname.startsWith("/p")) {
-    listenPrototype("isAdmin");
+    param = "isAdmin";
   } else if (window.location.pathname.startsWith("/e")) {
-    listenPrototype("permissionController");
+    param = "permissionController";
+  } else {
+    param = "";
   }
+  listenPrototype(param);
+
   return new Promise((resolve) => {
     resolvePromise.push(resolve);
   });

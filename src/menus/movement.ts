@@ -1,5 +1,5 @@
 import { GM_getValue, GM_setValue } from "$";
-import { jetPackSpeedStore } from "src/functions/jetpack";
+import { setJetPackSpeed } from "src/functions/jetpack";
 import Menu from "src/components/Menu.svelte";
 import { defaultJetPackSpeed } from "src/tools/defaults";
 import { teleport } from "src/functions/teleport";
@@ -28,7 +28,7 @@ export function bind(menu: Menu) {
     .name("JetPack.Speed")
     .onChange((v: number) => {
       GM_setValue("jetPackSpeed", v);
-      jetPackSpeedStore.set(v);
+      setJetPackSpeed
     });
 
   const teleportFolder = menu.addFolder("Teleport");

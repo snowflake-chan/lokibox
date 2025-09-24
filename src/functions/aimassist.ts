@@ -1,4 +1,12 @@
-import { coreService } from "src/services/coreService";
+import {
+  applyAxisMovement,
+  getBodyById,
+  getCameraViewport,
+  getCameraViewProjection,
+  getOthersBodies,
+  getSelfBody,
+} from "src/tools/arch";
+import { Vector3 } from "src/tools/vector3";
 import { worldToScreen } from "src/tools/world2screen";
 
 let handler: number | null = null;
@@ -18,27 +26,17 @@ let targetId: number | null = null;
 
 function getNearestEnemyInRange(range: number): number | null {
   try {
-    const state = coreService.getStateSync();
-    const playerId = state.secret.id;
-    const playerBody = state.bodies.find((v) => v.id === playerId);
-    if (!playerBody) return null;
+    const self = getSelfBody();
 
-    const enemies = state.replica.players.filter((p) => p.id !== playerId);
+    let nearestDistance = 0;
     let nearestEnemyId: number | null = null;
-    let minDistance = range;
 
-    for (const enemy of enemies) {
-      const enemyBody = state.bodies.find((b) => b.id === enemy.id);
-      if (!enemyBody) continue;
-      if (blackList.includes(enemy.id)) continue;
-
-      const dx = playerBody.px - enemyBody.px;
-      const dy = playerBody.py - enemyBody.py;
-      const dz = playerBody.pz - enemyBody.pz;
-      const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-      if (distance < minDistance) {
-        minDistance = distance;
+    for (const enemy of getOthersBodies()) {
+      const p1 = new Vector3(enemy.px, enemy.py, enemy.pz);
+      const p2 = new Vector3(self.px, self.py, self.pz);
+      const dist = p1.dist(p2);
+      if (nearestDistance > dist) {
+        nearestDistance = dist;
         nearestEnemyId = enemy.id;
       }
     }
@@ -55,8 +53,6 @@ export function deployAimAssist() {
 
   handler = setInterval(() => {
     try {
-      const state = coreService.getStateSync();
-
       if (currentMode === AimMode.TARGET) {
         targetId = currentTarget;
       } else if (currentMode === AimMode.RANGE) {
@@ -65,25 +61,23 @@ export function deployAimAssist() {
 
       if (!targetId) return;
 
-      const body = state.bodies.find((v) => v.id == targetId);
-      if (!body) return;
+      const body = getBodyById(targetId);
+      if (!body) {
+        clearAimAssist();
+        return;
+      }
 
-      const camera = state.camera;
-      const screenPos = worldToScreen([body.px, body.py, body.pz], camera);
+      const screenPos = worldToScreen(
+        [body.px, body.py, body.pz],
+        getCameraViewProjection(),
+        getCameraViewport()
+      );
 
       if (screenPos) {
-        const dx = screenPos.x - camera.viewport[0] / 2;
-        const dy = screenPos.y - camera.viewport[1] / 2;
-
-        coreService
-          .getCore()
-          .then((coreInstance) => {
-            coreInstance.game.input._applyAxisMovement(
-              dx * currentStrength,
-              dy * currentStrength
-            );
-          })
-          .catch(console.error);
+        const viewport = getCameraViewport();
+        const dx = screenPos.x - viewport[0] / 2;
+        const dy = screenPos.y - viewport[1] / 2;
+        applyAxisMovement(dx * currentStrength, dy * currentStrength);
       }
     } catch (error) {
       console.error("Aim assist tick error:", error);

@@ -6,7 +6,7 @@
   import { bind as bindCamera } from "src/menus/camera";
   import { bind as bindShortcut } from "src/menus/shortcut";
   import { defaultShortcut } from "./tools/defaults";
-  import { coreService } from "src/services/coreService";
+  import { getCore } from "src/tools/core";
   import { shortcutStore } from "src/functions/shortcut";
   import { onMount, onDestroy } from "svelte";
 
@@ -15,6 +15,8 @@
   let cameraMenu: Menu | undefined;
   let shortcutMenu: Menu | undefined;
   let shortcut = GM_getValue("shortcut", defaultShortcut);
+
+  let isResolved = false;
 
   const unsubShortcut = shortcutStore.subscribe((v) => {
     Object.assign(shortcut, v);
@@ -39,18 +41,23 @@
   onMount(() => {
     document.addEventListener("keydown", handleKeydown);
     document.addEventListener("contextmenu", preventContext);
-    coreService.getCore().then(async () => {
-      await waitUntil(() => !(!movementMenu || !cameraMenu || !shortcutMenu));
-      console.log("LokiBox Menu Loaded");
-      if (!movementMenu || !combatMenu || !cameraMenu || !shortcutMenu) return;
+    getCore()
+      .then(async () => {
+        isResolved = true;
 
-      bindMovement(movementMenu);
-      bindCombat(combatMenu);
-      bindCamera(cameraMenu);
-      bindShortcut(shortcutMenu);
-    }).catch((e) => {
-      console.warn("coreService initialization failed:", e);
-    });
+        await waitUntil(
+          () => !(!movementMenu || !cameraMenu || !shortcutMenu || !combatMenu)
+        );
+        console.log("LokiBox Menu Loaded");
+
+        bindMovement(movementMenu!);
+        bindCombat(combatMenu!);
+        bindCamera(cameraMenu!);
+        bindShortcut(shortcutMenu!);
+      })
+      .catch((e) => {
+        console.warn("coreService initialization failed:", e);
+      });
   });
 
   onDestroy(() => {
@@ -74,13 +81,15 @@
 </script>
 
 <main>
-  <div id="root" class:transparent={doHideMenu}>
-    <Menu title="Movement" bind:this={movementMenu}></Menu>
-    <Menu title="Combat" bind:this={combatMenu}></Menu>
-    <Menu title="Camera" bind:this={cameraMenu}></Menu>
-    <Menu title="Shortcut" bind:this={shortcutMenu}></Menu>
-  </div>
-  <Radar></Radar>
+  {#if isResolved}
+    <div id="root" class:transparent={doHideMenu}>
+      <Menu title="Movement" bind:this={movementMenu}></Menu>
+      <Menu title="Combat" bind:this={combatMenu}></Menu>
+      <Menu title="Camera" bind:this={cameraMenu}></Menu>
+      <Menu title="Shortcut" bind:this={shortcutMenu}></Menu>
+    </div>
+    <Radar></Radar>
+  {/if}
 </main>
 
 <style lang="scss">
