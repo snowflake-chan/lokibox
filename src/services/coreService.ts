@@ -9,7 +9,6 @@ export class CoreService {
   private _stateSnapshot: State | null = null;
   private _cleanupFns: (() => void)[] = [];
   private _initialized = false;
-  private _initTimeoutMs = 15000;
 
   private legacyGetCore: (() => Promise<Core>) | null = null;
 
@@ -44,19 +43,11 @@ export class CoreService {
       );
     }
 
-    const timeoutMs = this._initTimeoutMs;
     let timeoutHandle: any = null;
 
     this._corePromise = (async () => {
       try {
-        const race = this.legacyGetCore!();
-        const timeout = new Promise<never>((_res, rej) => {
-          timeoutHandle = setTimeout(() => {
-            rej(new Error(`coreService init timeout after ${timeoutMs}ms`));
-          }, timeoutMs);
-        });
-
-        const core = await Promise.race([race, timeout]);
+        const core = await this.legacyGetCore!();
         if (timeoutHandle) {
           clearTimeout(timeoutHandle);
           timeoutHandle = null;
