@@ -18,15 +18,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
 
       # 2. 安装 pnpm（关键步骤，不然找不到命令）
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9   # 或者改成你项目用的版本
-
-      - run: which pnpm && pnpm --version
 
       # 3. 装依赖
       - name: Install dependencies
