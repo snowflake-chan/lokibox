@@ -37,7 +37,11 @@ export class Vector3 {
     return new Vector3(this.x * times, this.y * times, this.z * times);
   }
 
-  dist(v: Vector3) {
+  sub(v: Vector3) {
+    return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z);
+  }
+
+  sqrDist(v: Vector3) {
     const dx = this.x - v.x;
     const dy = this.y - v.y;
     const dz = this.z - v.z;

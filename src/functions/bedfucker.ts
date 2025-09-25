@@ -1,4 +1,9 @@
-import { getCameraMode, setCameraEye, setCameraMode, setCameraTarget } from "src/tools/arch";
+import {
+  getCameraMode,
+  setCameraEye,
+  setCameraMode,
+  setCameraTarget,
+} from "src/tools/arch";
 
 const y = 41.5;
 const x1 = 192.5;
@@ -7,7 +12,7 @@ const z = 127;
 
 export function bedFucker() {
   const originalMode = getCameraMode();
-  setCameraMode(CameraMode.FPS);
+  setCameraMode(1);
   setCameraTarget(z, y, z);
   doInSequence(
     [
@@ -25,14 +30,17 @@ export function bedFucker() {
       },
     ],
     3000
-  ).then(()=>{
+  ).then(() => {
     setCameraMode(originalMode);
   });
 }
 
-function doInSequence(tasks: (() => void)[], interval: number):Promise<void> {
+function doInSequence(tasks: (() => void)[], interval: number): Promise<void> {
   return new Promise((resolve) => {
-    if (tasks.length === 0) resolve();
+    if (tasks.length === 0) {
+      resolve();
+      return;
+    }
     setTimeout(() => {
       tasks[0]();
       doInSequence(tasks.slice(1, -1), interval);

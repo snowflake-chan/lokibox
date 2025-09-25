@@ -25,63 +25,54 @@ let currentStrength: number = 0.1;
 let targetId: number | null = null;
 
 function getNearestEnemyInRange(range: number): number | null {
-  try {
-    const self = getSelfBody();
+  const self = getSelfBody();
 
-    let nearestDistance = 0;
-    let nearestEnemyId: number | null = null;
+  let nearestDistance = Infinity;
+  let nearestEnemyId: number | null = null;
 
-    for (const enemy of getOthersBodies()) {
-      const p1 = new Vector3(enemy.px, enemy.py, enemy.pz);
-      const p2 = new Vector3(self.px, self.py, self.pz);
-      const dist = p1.dist(p2);
-      if (nearestDistance > dist) {
-        nearestDistance = dist;
-        nearestEnemyId = enemy.id;
-      }
+  for (const enemy of getOthersBodies()) {
+    const p1 = new Vector3(enemy.px, enemy.py, enemy.pz);
+    const p2 = new Vector3(self.px, self.py, self.pz);
+    const dist = p1.sqrDist(p2);
+    if(dist > range * range) continue;
+    if (nearestDistance > (dist * dist)) {
+      nearestDistance = dist * dist;
+      nearestEnemyId = enemy.id;
     }
-
-    return nearestEnemyId;
-  } catch (error) {
-    console.error("getNearestEnemyInRange failed:", error);
-    return null;
   }
+
+  return nearestEnemyId;
 }
 
 export function deployAimAssist() {
   clearAimAssist();
 
   handler = setInterval(() => {
-    try {
-      if (currentMode === AimMode.TARGET) {
-        targetId = currentTarget;
-      } else if (currentMode === AimMode.RANGE) {
-        targetId = getNearestEnemyInRange(currentRange);
-      }
+    if (currentMode === AimMode.TARGET) {
+      targetId = currentTarget;
+    } else if (currentMode === AimMode.RANGE) {
+      targetId = getNearestEnemyInRange(currentRange);
+    }
 
-      if (!targetId) return;
+    if (!targetId) return;
 
-      const body = getBodyById(targetId);
-      if (!body) {
-        clearAimAssist();
-        return;
-      }
-
-      const screenPos = worldToScreen(
-        [body.px, body.py, body.pz],
-        getCameraViewProjection(),
-        getCameraViewport()
-      );
-
-      if (screenPos) {
-        const viewport = getCameraViewport();
-        const dx = screenPos.x - viewport[0] / 2;
-        const dy = screenPos.y - viewport[1] / 2;
-        applyAxisMovement(dx * currentStrength, dy * currentStrength);
-      }
-    } catch (error) {
-      console.error("Aim assist tick error:", error);
+    const body = getBodyById(targetId);
+    if (!body) {
       clearAimAssist();
+      return;
+    }
+
+    const screenPos = worldToScreen(
+      [body.px, body.py, body.pz],
+      getCameraViewProjection(),
+      getCameraViewport()
+    );
+
+    if (screenPos) {
+      const viewport = getCameraViewport();
+      const dx = screenPos.x - viewport[0] / 2;
+      const dy = screenPos.y - viewport[1] / 2;
+      applyAxisMovement(dx * currentStrength, dy * currentStrength);
     }
   }, 10);
 }
