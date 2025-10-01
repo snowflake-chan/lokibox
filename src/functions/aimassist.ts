@@ -65,18 +65,13 @@ export function deployAimAssist() {
 
     const self = getSelfBody();
     const camera = getCamera();
-    if(!self || !camera) return;
+    if (!self || !camera) return;
 
-    const useAngleCheck = true;
+    if (self) {
+      const selfPos = [self.px, self.py, self.pz];
+      const targetPos = [body.px, body.py, body.pz];
 
-    if (useAngleCheck) {
-
-      if (self) {
-        const selfPos = [self.px, self.py, self.pz];
-        const targetPos = [body.px, body.py, body.pz];
-
-        if (!isTarget(selfPos, targetPos, camera, 90)) return;
-      }
+      if (!isTarget(selfPos, targetPos, camera, 90)) return;
     }
 
     const screenPos = worldToScreen(
