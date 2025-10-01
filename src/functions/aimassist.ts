@@ -31,11 +31,12 @@ function getNearestEnemyInRange(range: number): number | null {
   let nearestEnemyId: number | null = null;
 
   for (const enemy of getOthersBodies()) {
+    if (blackList.includes(enemy.id)) continue;
     const p1 = new Vector3(enemy.px, enemy.py, enemy.pz);
     const p2 = new Vector3(self.px, self.py, self.pz);
     const dist = p1.sqrDist(p2);
-    if(dist > range * range) continue;
-    if (nearestDistance > (dist * dist)) {
+    if (dist > range * range) continue;
+    if (nearestDistance > dist * dist) {
       nearestDistance = dist * dist;
       nearestEnemyId = enemy.id;
     }
@@ -78,7 +79,6 @@ export function deployAimAssist() {
 }
 
 window.addEventListener("keydown", (e) => {
-  console.log(e.key, targetId);
   if (e.key === "o" && targetId) {
     blackList.push(targetId);
     console.log(`Added ${targetId} to blacklist`);
