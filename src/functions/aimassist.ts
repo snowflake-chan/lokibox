@@ -1,10 +1,10 @@
 import {
   applyAxisMovement,
   getBodyById,
-  getCameraViewport,
-  getCameraViewProjection,
+  getCamera,
   getOthersBodies,
   getSelfBody,
+  isTarget,
 } from "src/tools/arch";
 import { Vector3 } from "src/tools/vector3";
 import { worldToScreen } from "src/tools/world2screen";
@@ -63,14 +63,25 @@ export function deployAimAssist() {
       return;
     }
 
+    const self = getSelfBody();
+    const camera = getCamera();
+    if (!self || !camera) return;
+
+    if (self) {
+      const selfPos = [self.px, self.py, self.pz];
+      const targetPos = [body.px, body.py, body.pz];
+
+      if (!isTarget(selfPos, targetPos, camera, 90)) return;
+    }
+
     const screenPos = worldToScreen(
       [body.px, body.py, body.pz],
-      getCameraViewProjection(),
-      getCameraViewport()
+      camera.viewProjection,
+      camera.viewport,
     );
 
     if (screenPos) {
-      const viewport = getCameraViewport();
+      const viewport = camera.viewport;
       const dx = screenPos.x - viewport[0] / 2;
       const dy = screenPos.y - viewport[1] / 2;
       applyAxisMovement(dx * currentStrength, dy * currentStrength);

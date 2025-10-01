@@ -2,10 +2,10 @@ import { Vector3 } from "./vector3";
 import { Quaternion } from "./quaternion";
 import { getCore } from "src/tools/core";
 
-let core:Core;
-let state:State;
+let core: Core;
+let state: State;
 
-getCore().then((v)=>{
+getCore().then((v) => {
   core = v;
   state = v.game.state;
 });
@@ -23,7 +23,7 @@ export function setCameraTargetId(id: number) {
   state.secret.replica.camera.targetId = id;
 }
 
-export function getCameraTargetId(){
+export function getCameraTargetId() {
   return state.secret.replica.camera.targetId;
 }
 
@@ -39,7 +39,7 @@ export function setCameraFovY(fovY: number) {
   state.secret.replica.camera.fovY = fovY;
 }
 
-export function getCameraFovY(){
+export function getCameraFovY() {
   return state.secret.replica.camera.fovY;
 }
 
@@ -71,12 +71,8 @@ export function applyAxisMovement(x: number, y: number) {
   core.game.input._applyAxisMovement(x, y);
 }
 
-export function getCameraViewport() {
-  return state.camera.viewport;
-}
-
-export function getCameraViewProjection() {
-  return state.camera.viewProjection;
+export function getCamera(): Camera {
+  return state.camera;
 }
 
 export function getBodyById(id: number) {
@@ -96,6 +92,33 @@ export function setPosition(x: number, y: number, z: number) {
   self.pz = z;
 }
 
-export function setKeyState(key: GameKey, status: number){
+export function setKeyState(key: GameKey, status: number) {
   state.input.keyState[key] = status;
+}
+
+export function isTarget(playerPos: number[], targetPos: number[], camera: Camera, maxAngle: number = 90): boolean {
+  const cameraForward = [
+    camera.viewProjection[8],
+    camera.viewProjection[9],
+    camera.viewProjection[10]
+  ];
+  const toTarget = [
+    targetPos[0] - playerPos[0],
+    targetPos[1] - playerPos[1],
+    targetPos[2] - playerPos[2]
+  ];
+  const length = Math.sqrt(toTarget[0] ** 2 + toTarget[1] ** 2 + toTarget[2] ** 2);
+  if (!length) return false;
+
+  const toTargetNormalized = [
+    toTarget[0] / length,
+    toTarget[1] / length,
+    toTarget[2] / length
+  ];
+  const dot = cameraForward[0] * toTargetNormalized[0] +
+    cameraForward[1] * toTargetNormalized[1] +
+    cameraForward[2] * toTargetNormalized[2];
+  const angle = Math.acos(Math.max(-1, Math.min(1, dot))) * (180 / Math.PI);
+  console.log(`🎯 Angle to target: ${angle.toFixed(1)}° (max: ${maxAngle}°) - ${angle <= maxAngle ? 'nat clever' : 'nat stupid'}`);
+  return angle <= maxAngle;
 }
