@@ -13,12 +13,12 @@ export default defineConfig({
       userscript: {
         icon: "https://vitejs.dev/logo.svg",
         namespace: "npm/vite-plugin-monkey",
-        match: ["https://view.dao3.fun/p/*","https://view.dao3.fun/e/*","https://view.box.game/p/*"],
+        match: ["https://view.dao3.fun/p/*", "https://view.dao3.fun/e/*", "https://view.goboxgame.com/p/*"],
       },
     }),
   ],
-  resolve:{
-    alias:{
+  resolve: {
+    alias: {
       "src": path.resolve(fileURLToPath(new URL('./src', import.meta.url)))
     }
   }
