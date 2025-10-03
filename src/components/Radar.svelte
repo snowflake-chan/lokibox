@@ -6,11 +6,11 @@
   let container: HTMLDivElement;
   let radar: Radar;
 
-  let player: Body = getSelfBody();
   let coords = "";
   let coordsHandler: number;
 
   const updateCoords = () => {
+    let player: Body = getSelfBody();
     coords = `(${player.px.toFixed(2)}, ${player.py.toFixed(2)}, ${player.pz.toFixed(2)})`;
   };
   onMount(async () => {
@@ -28,12 +28,10 @@
 </script>
 
 <div id="radar-container">
-  {#if player}
-    <div bind:this={container} id="radar"></div>
-    <div id="coordinates">
-      {coords}
-    </div>
-  {/if}
+  <div bind:this={container} id="radar"></div>
+  <div id="coordinates">
+    {coords}
+  </div>
 </div>
 
 <style lang="scss">
