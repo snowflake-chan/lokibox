@@ -4,6 +4,7 @@ declare interface Core {
 declare interface Game {
   state: State;
   input: Input;
+  voxel: Voxel;
 }
 declare interface Input {
   _applyAxisMovement: (number, number) => void;
@@ -20,6 +21,11 @@ declare interface State {
 }
 declare interface StateVoxel {
   shape: [number, number, number];
+}
+
+declare interface Voxel {
+  _setVoxel: (x: number, y: number, z: number, id: number) => void;
+  getVoxel: (x: number, y: number, z: number) => number;
 }
 declare interface Secret {
   id: number;
