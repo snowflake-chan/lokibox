@@ -8,7 +8,7 @@ import {
 } from "src/tools/arch";
 import { Vector3 } from "src/tools/vector3";
 import { worldToScreen } from "src/tools/world2screen";
-import { addTeammate, isTeammate} from "./teammates";
+import { addTeammate, isTeammate } from "./teammates";
 
 let handler: number | null = null;
 
@@ -73,11 +73,7 @@ export function deployAimAssist() {
       if (!isTarget(selfPos, targetPos, camera, 90)) return;
     }
 
-    const screenPos = worldToScreen(
-      [body.px, body.py, body.pz],
-      camera.viewProjection,
-      camera.viewport,
-    );
+    const screenPos = worldToScreen(body.px, body.py, body.pz);
 
     if (screenPos) {
       const viewport = camera.viewport;
