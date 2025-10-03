@@ -14,6 +14,7 @@
   let combatMenu: Menu | undefined;
   let cameraMenu: Menu | undefined;
   let shortcutMenu: Menu | undefined;
+  let functionList: FunctionList|undefined;
   let shortcut = GM_getValue("shortcut", defaultShortcut);
 
   let isResolved = false;
@@ -78,6 +79,7 @@
   }
 
   import Radar from "./components/Radar.svelte";
+  import FunctionList from "./components/FunctionList.svelte";
 </script>
 
 <main>
@@ -89,6 +91,7 @@
       <Menu title="Shortcut" bind:this={shortcutMenu}></Menu>
     </div>
     <Radar></Radar>
+    <FunctionList ></FunctionList>
   {/if}
 </main>
 
