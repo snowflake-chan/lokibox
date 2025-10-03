@@ -8,10 +8,9 @@ import {
 } from "src/tools/arch";
 import { Vector3 } from "src/tools/vector3";
 import { worldToScreen } from "src/tools/world2screen";
+import { addTeammate, isTeammate } from "./teammates";
 
 let handler: number | null = null;
-
-const blackList: number[] = [];
 
 export enum AimMode {
   TARGET = "target",
@@ -31,7 +30,7 @@ function getNearestEnemyInRange(range: number): number | null {
   let nearestEnemyId: number | null = null;
 
   for (const enemy of getOthersBodies()) {
-    if (blackList.includes(enemy.id)) continue;
+    if (isTeammate(enemy.id)) continue;
     const p1 = new Vector3(enemy.px, enemy.py, enemy.pz);
     const p2 = new Vector3(self.px, self.py, self.pz);
     const dist = p1.sqrDist(p2);
@@ -74,11 +73,7 @@ export function deployAimAssist() {
       if (!isTarget(selfPos, targetPos, camera, 90)) return;
     }
 
-    const screenPos = worldToScreen(
-      [body.px, body.py, body.pz],
-      camera.viewProjection,
-      camera.viewport,
-    );
+    const screenPos = worldToScreen(body.px, body.py, body.pz);
 
     if (screenPos) {
       const viewport = camera.viewport;
@@ -91,7 +86,7 @@ export function deployAimAssist() {
 
 window.addEventListener("keydown", (e) => {
   if (e.key === "o" && targetId) {
-    blackList.push(targetId);
+    addTeammate(targetId);
     console.log(`Added ${targetId} to blacklist`);
   }
 });
@@ -117,8 +112,4 @@ export function setAimRange(range: number) {
 
 export function setAimStrength(strength: number) {
   currentStrength = strength;
-}
-
-export function clearBlacklist() {
-  blackList.length = 0;
 }

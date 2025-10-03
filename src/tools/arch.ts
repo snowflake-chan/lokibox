@@ -119,6 +119,5 @@ export function isTarget(playerPos: number[], targetPos: number[], camera: Camer
     cameraForward[1] * toTargetNormalized[1] +
     cameraForward[2] * toTargetNormalized[2];
   const angle = Math.acos(Math.max(-1, Math.min(1, dot))) * (180 / Math.PI);
-  console.log(`🎯 Angle to target: ${angle.toFixed(1)}° (max: ${maxAngle}°) - ${angle <= maxAngle ? 'nat clever' : 'nat stupid'}`);
   return angle <= maxAngle;
 }

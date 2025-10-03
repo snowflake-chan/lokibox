@@ -14,6 +14,8 @@
   let combatMenu: Menu | undefined;
   let cameraMenu: Menu | undefined;
   let shortcutMenu: Menu | undefined;
+  let functionList: FunctionList | undefined;
+  let ESPContainer: HTMLDivElement;
   let shortcut = GM_getValue("shortcut", defaultShortcut);
 
   let isResolved = false;
@@ -50,6 +52,8 @@
         );
         console.log("LokiBox Menu Loaded");
 
+        activateESP(ESPContainer);
+
         bindMovement(movementMenu!);
         bindCombat(combatMenu!);
         bindCamera(cameraMenu!);
@@ -78,6 +82,8 @@
   }
 
   import Radar from "./components/Radar.svelte";
+  import FunctionList from "./components/FunctionList.svelte";
+  import { activateESP } from "./functions/esp";
 </script>
 
 <main>
@@ -89,6 +95,8 @@
       <Menu title="Shortcut" bind:this={shortcutMenu}></Menu>
     </div>
     <Radar></Radar>
+    <FunctionList></FunctionList>
+    <div id="esp-container" bind:this={ESPContainer}></div>
   {/if}
 </main>
 
@@ -114,5 +122,16 @@
       opacity: 1;
       transition: opacity 0.3s;
     }
+  }
+
+  #esp-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 0 0 0 0;
+    pointer-events: none;
+    z-index: 997;
   }
 </style>

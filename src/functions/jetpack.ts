@@ -29,6 +29,13 @@ async function handleJetpackKey() {
 function onKeydown(e: KeyboardEvent) {
   if (e.key === shortcut.jetPack) {
     void handleJetpackKey();
+    
+  }
+}
+
+function onKeyUp(e: KeyboardEvent) {
+  if (e.key === shortcut.jetPack) {
+    
   }
 }
 

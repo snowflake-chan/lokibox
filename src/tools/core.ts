@@ -1,3 +1,5 @@
+import { unsafeWindow } from "$";
+
 let resolvePromise: ((value: Core) => void)[] = [];
 
 function listenPrototype(param: string) {
@@ -6,6 +8,7 @@ function listenPrototype(param: string) {
       // @ts-ignore
       delete Object.prototype[param];
       const core = this as Core;
+      (unsafeWindow as any).core = core;
       const handler = setInterval(() => {
         if (core.game && resolvePromise) {
           const playerId = core.game.state.secret.id;
