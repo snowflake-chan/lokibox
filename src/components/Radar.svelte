@@ -1,11 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { Application, Graphics, Container } from "pixi.js";
-  import {
-    getCameraRotation,
-    getOthersBodies,
-    getSelfBody,
-  } from "src/tools/arch";
+  import { getSelfBody } from "src/tools/arch";
   import { Radar } from "./radar";
 
   let container: HTMLDivElement;
