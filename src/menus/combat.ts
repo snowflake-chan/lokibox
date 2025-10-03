@@ -8,10 +8,10 @@ import {
   setAimTarget,
   setAimRange,
   setAimStrength,
-  clearBlacklist,
 } from "src/functions/aimassist";
 import { getPlayerMap } from "src/tools/arch";
 import { bedFucker } from "src/functions/bedfucker";
+import { clearTeammates } from "src/functions/teammates";
 
 const autoClickSettings = {
   interval: 200,
@@ -40,7 +40,7 @@ const aimAssistSettings = {
     deployAimAssist();
   },
   clear: clearAimAssist,
-  clearBlacklist,
+  clearTeammates,
 };
 
 export function bind(menu: Menu) {
@@ -101,8 +101,8 @@ export function bind(menu: Menu) {
         .name("Range");
 
       clearBLController = aimAssistMenu
-        .add(aimAssistSettings, "clearBlacklist")
-        .name("Clear Blacklist");
+        .add(aimAssistSettings, "clearTeammates")
+        .name("Clear Teammates");
     }
   }
 
