@@ -15,6 +15,7 @@ export class WebSocketProxy {
         this.originalWebSocket.addEventListener("message", (event: MessageEvent) => {
             if (this.enableMessageProcessing) {
                 this.messageHandlers.forEach(handler => handler(event));
+                console.log("WebSocketProxy: message received", event);
             }
         });
         this.addEventListener("message", (event: MessageEvent) => this.onmessage(event));

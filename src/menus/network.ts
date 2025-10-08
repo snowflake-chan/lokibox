@@ -10,16 +10,15 @@ let dropMessageController: any = null;
 let dropSentController: any = null;
 
 export function bind(menu: Menu) {
-    const networkFolder = menu.addFolder("Network");
-    dropMessageController = networkFolder.add(networkSettings, "disableMessageProcessing")
-        .name("Disable Message Processing")
+    dropMessageController = menu.add(networkSettings, "disableMessageProcessing")
+        .name("Disable Message Processing (OFF)")
         .onChange((value: boolean) => {
             handleDropMessagePacket(value);
             updateControllerDisplay();
         });
     
-    dropSentController = networkFolder.add(networkSettings, "disableSending")
-        .name("Disable Sending")
+    dropSentController = menu.add(networkSettings, "disableSending")
+        .name("Disable Sending (ON)")
         .onChange((value: boolean) => {
             handleDropSentPacket(value);
             updateControllerDisplay();
