@@ -17,18 +17,23 @@ export enum AimMode {
   RANGE = "range",
 }
 
+export enum TargetMode {
+  NEAREST = "nearest",
+  RANDOM = "random"
+}
+
 let currentMode: AimMode = AimMode.TARGET;
 let currentTarget: number = 0;
 let currentRange: number = 5;
 let currentStrength: number = 0.1;
 let targetId: number | null = null;
 
-function getNearestEnemyInRange(range: number): number | null {
+export function getEnemyInRange(range: number, mode: TargetMode = TargetMode.NEAREST): number | null {
   const self = getSelfBody();
 
   let nearestDistance = Infinity;
   let nearestEnemyId: number | null = null;
-
+  const enemiesInRange = [];
   for (const enemy of getOthersBodies()) {
     if (isTeammate(enemy.id)) continue;
     const p1 = new Vector3(enemy.px, enemy.py, enemy.pz);
@@ -39,8 +44,14 @@ function getNearestEnemyInRange(range: number): number | null {
       nearestDistance = dist * dist;
       nearestEnemyId = enemy.id;
     }
+    enemiesInRange.push(enemy.id);
   }
 
+  if (mode === TargetMode.RANDOM && enemiesInRange.length) {
+    const randomIndex = Math.floor(Math.random() * enemiesInRange.length);
+    return enemiesInRange[randomIndex];
+  }
+  
   return nearestEnemyId;
 }
 
@@ -51,7 +62,7 @@ export function deployAimAssist() {
     if (currentMode === AimMode.TARGET) {
       targetId = currentTarget;
     } else if (currentMode === AimMode.RANGE) {
-      targetId = getNearestEnemyInRange(currentRange);
+      targetId = getEnemyInRange(currentRange);
     }
 
     if (!targetId) return;
@@ -87,7 +98,7 @@ export function deployAimAssist() {
 window.addEventListener("keydown", (e) => {
   if (e.key === "o" && targetId) {
     addTeammate(targetId);
-    console.log(`Added ${targetId} to blacklist`);
+    console.log(`Added ${targetId} to blacklist(Is Aiming)`);
   }
 });
 

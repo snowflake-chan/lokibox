@@ -5,6 +5,7 @@
   import { bind as bindCombat } from "src/menus/combat";
   import { bind as bindCamera } from "src/menus/camera";
   import { bind as bindShortcut } from "src/menus/shortcut";
+  import { bind as bindNetWork } from "src/menus/network";
   import { defaultShortcut } from "./tools/defaults";
   import { getCore } from "src/tools/core";
   import { shortcutStore } from "src/functions/shortcut";
@@ -14,6 +15,7 @@
   let combatMenu: Menu | undefined;
   let cameraMenu: Menu | undefined;
   let shortcutMenu: Menu | undefined;
+  let networkMenu: Menu | undefined;
   let functionList: FunctionList | undefined;
   let ESPContainer: HTMLDivElement;
   let shortcut = GM_getValue("shortcut", defaultShortcut);
@@ -48,7 +50,7 @@
         isResolved = true;
 
         await waitUntil(
-          () => !(!movementMenu || !cameraMenu || !shortcutMenu || !combatMenu)
+          () => !(!movementMenu || !cameraMenu || !shortcutMenu || !combatMenu || !networkMenu)
         );
         console.log("LokiBox Menu Loaded");
 
@@ -58,6 +60,7 @@
         bindCombat(combatMenu!);
         bindCamera(cameraMenu!);
         bindShortcut(shortcutMenu!);
+        bindNetWork(networkMenu!);
       })
       .catch((e) => {
         console.warn("coreService initialization failed:", e);
@@ -93,6 +96,7 @@
       <Menu title="Combat" bind:this={combatMenu}></Menu>
       <Menu title="Camera" bind:this={cameraMenu}></Menu>
       <Menu title="Shortcut" bind:this={shortcutMenu}></Menu>
+      <Menu title="Network" bind:this={networkMenu}></Menu>
     </div>
     <Radar></Radar>
     <FunctionList></FunctionList>

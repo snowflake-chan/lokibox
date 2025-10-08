@@ -9,6 +9,13 @@ import {
   getCameraTargetId,
 } from "src/tools/arch";
 import { getPlayerMap } from "src/tools/arch";
+import {
+  enableKillAura,
+  disableKillAura,
+  isKillAuraEnabled,
+  getKillAuraConfig,
+  setKillAuraRange
+} from "src/functions/killarua";
 
 const playerSettings = {
   mode: 0,
@@ -45,6 +52,27 @@ export function bind(menu: Menu) {
       "backToMe"
     )
     .name("Back To Me");
+
+  const killAuraConfig = getKillAuraConfig();
+  const killAuraState = {
+    enabled: killAuraConfig.enabled,
+    range: killAuraConfig.range
+  };
+
+  const killAuraFolder = menu.addFolder("Kill Aura");
+
+  killAuraFolder.add(killAuraState, "enabled")
+    .name("Enabled")
+    .onChange((value: boolean) => {
+      value ? enableKillAura() : disableKillAura();
+      killAuraState.enabled = isKillAuraEnabled();
+    });
+
+  killAuraFolder.add(killAuraState, "range", 1, 50, 1)
+    .name("Range")
+    .onChange((value: number) => {
+      setKillAuraRange(value);
+    });
 
   controller.domElement.addEventListener("click", () => {
     controller.options(getPlayerMap());
