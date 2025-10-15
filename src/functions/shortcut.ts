@@ -9,7 +9,7 @@ const shortcutStore: Writable<any> = writable(
 export { shortcutStore };
 
 //保证更新
-if (!GM_getValue("shortcut") || GM_getValue("shortcut")["jetPack"]) {
+if (!GM_getValue("shortcut") || GM_getValue("shortcut")["jetPack"] || !GM_getValue("shortcut")["AutoPave"]) {
   GM_setValue("shortcut", defaultShortcut);
 }
 
