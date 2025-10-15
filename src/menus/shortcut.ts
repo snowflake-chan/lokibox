@@ -6,12 +6,18 @@ import { defaultShortcut } from "src/tools/defaults";
 const shortcut = GM_getValue("shortcut", defaultShortcut);
 
 export function bind(menu: Menu) {
-  menu.add(shortcut, "openMenu").name("Open Menu").onChange(updateShortcut);
-
-  menu.add(shortcut, "jetPack").name("JetPack").onChange(updateShortcut);
+  for (const i in shortcut) {
+    //@ts-ignore
+    menu.add(shortcut, i).onChange(updateShortcut);
+  }
 
   function updateShortcut() {
     GM_setValue("shortcut", shortcut);
     shortcutStore.set(shortcut);
+  }
+
+  function resetShortcut() {
+    GM_setValue("shortcut", defaultShortcut);
+    shortcutStore.set(defaultShortcut);
   }
 }

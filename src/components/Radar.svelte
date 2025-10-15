@@ -1,3 +1,4 @@
+<!--雷达组件-->
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { getSelfBody } from "src/tools/arch";

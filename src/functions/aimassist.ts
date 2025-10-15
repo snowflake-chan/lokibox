@@ -1,3 +1,7 @@
+/**
+ * 自动瞄准模块
+ * @module functions/aimassist
+ */
 import {
   applyAxisMovement,
   getBodyById,
@@ -9,20 +13,19 @@ import {
 import { Vector3 } from "src/tools/vector3";
 import { worldToScreen } from "src/tools/world2screen";
 import { addTeammate, isTeammate } from "./teammates";
+import { activateShortcut } from "./shortcut";
 
 let handler: number | null = null;
 
-export enum AimMode {
-  TARGET = "target",
-  RANGE = "range",
-}
-
-let currentMode: AimMode = AimMode.TARGET;
-let currentTarget: number = 0;
 let currentRange: number = 5;
 let currentStrength: number = 0.1;
 let targetId: number | null = null;
 
+/**
+ * 获取范围内最近的敌人
+ * @param range 有效范围
+ * @returns 目标敌人ID
+ */
 function getNearestEnemyInRange(range: number): number | null {
   const self = getSelfBody();
 
@@ -44,15 +47,12 @@ function getNearestEnemyInRange(range: number): number | null {
   return nearestEnemyId;
 }
 
+/**部署AimAssist */
 export function deployAimAssist() {
   clearAimAssist();
 
   handler = setInterval(() => {
-    if (currentMode === AimMode.TARGET) {
-      targetId = currentTarget;
-    } else if (currentMode === AimMode.RANGE) {
-      targetId = getNearestEnemyInRange(currentRange);
-    }
+    targetId = getNearestEnemyInRange(currentRange);
 
     if (!targetId) return;
 
@@ -84,6 +84,7 @@ export function deployAimAssist() {
   }, 10);
 }
 
+//设置Teammate快捷键
 window.addEventListener("keydown", (e) => {
   if (e.key === "o" && targetId) {
     addTeammate(targetId);
@@ -91,6 +92,7 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
+/**清除AimAssist */
 export function clearAimAssist() {
   if (handler) {
     clearInterval(handler);
@@ -98,18 +100,20 @@ export function clearAimAssist() {
   }
 }
 
-export function setAimMode(mode: AimMode) {
-  currentMode = mode;
-}
-
-export function setAimTarget(target: number) {
-  currentTarget = target;
-}
-
+/**
+ * 设置自动瞄准半径
+ * @param range 范围
+ */
 export function setAimRange(range: number) {
   currentRange = range;
 }
 
+/**
+ * 设置自动瞄准力度
+ * @param strength 力度
+ */
 export function setAimStrength(strength: number) {
   currentStrength = strength;
 }
+
+activateShortcut("AimAssist", deployAimAssist, clearAimAssist);

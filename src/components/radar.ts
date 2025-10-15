@@ -1,3 +1,7 @@
+/**
+ * 雷达控制
+ * @module components/radar
+ */
 import { Application, Container, Graphics } from "pixi.js";
 import { isTeammate } from "src/functions/teammates";
 import {
@@ -6,6 +10,7 @@ import {
   getSelfBody,
 } from "src/tools/arch";
 
+/**@class 雷达类 */
 export class Radar {
   container: HTMLDivElement;
   player: Body;

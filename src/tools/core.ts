@@ -1,7 +1,15 @@
+/**
+ * Box3 Core获取模块
+ * @module core
+ */
 import { unsafeWindow } from "$";
 
 let resolvePromise: ((value: Core) => void)[] = [];
 
+/**
+ * 监听原型创建 
+ * @param param 监听目标key
+ */
 function listenPrototype(param: string) {
   Object.defineProperty(Object.prototype, param, {
     set() {
@@ -28,6 +36,7 @@ function listenPrototype(param: string) {
   });
 }
 
+/**获取Core */
 export function getCore(): Promise<Core> {
   let param: string;
   if (window.location.pathname.startsWith("/p")) {

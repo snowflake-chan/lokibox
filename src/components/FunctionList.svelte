@@ -1,12 +1,5 @@
 <script lang="ts">
-  const funcList: string[] = [];
-  export function switchFunc(name: string) {
-    if (funcList.includes(name)) {
-      funcList.push(name);
-    } else {
-      funcList.splice(funcList.indexOf(name), 1);
-    }
-  }
+  import {funcList} from "./functionList";
 </script>
 
 <main>
@@ -23,5 +16,6 @@
     right: 0;
     bottom: 0;
     text-align: right;
+    z-index: 997;
   }
 </style>

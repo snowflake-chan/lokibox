@@ -1,5 +1,15 @@
+/**
+ * 世界坐标转屏幕坐标
+ * @module tools/world2screen
+ */
 import { getCamera } from "./arch";
 
+/**
+ * 矩阵旋转四元数
+ * @param m 矩阵
+ * @param v 四元数
+ * @returns 
+ */
 export function mulMat4Vec4(m: number[], v: number[]) {
   return [
     m[0] * v[0] + m[4] * v[1] + m[8] * v[2] + m[12] * v[3],
@@ -9,6 +19,13 @@ export function mulMat4Vec4(m: number[], v: number[]) {
   ];
 }
 
+/**
+ * 世界坐标求屏幕坐标
+ * @param x 
+ * @param y 
+ * @param z 
+ * @returns 屏幕坐标
+ */
 export function worldToScreen(x: number, y: number, z: number) {
   const camera = getCamera();
   const v = [x, y, z, 1.0];
