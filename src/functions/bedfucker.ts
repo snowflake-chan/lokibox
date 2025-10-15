@@ -1,3 +1,7 @@
+/**
+ * 自动拆除起床战争床模块
+ * @module functions/bedfucker
+ */
 import { setCameraEye, setCameraMode, setCameraTarget } from "src/tools/arch";
 
 const y = 41.5;
@@ -5,6 +9,7 @@ const x1 = 192.5;
 const x2 = 59.5;
 const z = 127.5;
 
+/**启动BedFucker */
 export function bedFucker() {
   setCameraMode(1);
   setCameraTarget(z, y, z);
@@ -30,6 +35,7 @@ export function bedFucker() {
   });
 }
 
+/**按顺序执行函数 */
 function doInSequence(tasks: (() => void)[], interval: number): Promise<void> {
   return new Promise((resolve) => {
     tasks[0]();

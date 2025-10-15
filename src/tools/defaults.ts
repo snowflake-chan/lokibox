@@ -1,6 +1,9 @@
 export const defaultShortcut = {
-    openMenu: "Tab",
-    jetPack: "r"
+    "Menu": "Tab",
+    "JetPack": "r",
+    "AimAssist": "-",
+    "AutoClicker": "=",
+    "Teammate": "o"
 }
 
 export const defaultJetPackSpeed = 1.5;

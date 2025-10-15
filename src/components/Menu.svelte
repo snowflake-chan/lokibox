@@ -1,3 +1,4 @@
+<!--菜单模板-->
 <script lang="ts">
   import { GM_getValue, GM_setValue } from "$";
   import GUI from "lil-gui";

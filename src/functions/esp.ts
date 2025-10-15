@@ -1,3 +1,7 @@
+/**
+ * ESP透视模块
+ * @module functions/esp
+ */
 import { Application, Graphics, Ticker } from "pixi.js";
 import { getCamera, getOthersBodies, getSelfBody, isTarget } from "src/tools/arch";
 import { worldToScreen } from "src/tools/world2screen";
@@ -8,6 +12,7 @@ app.init({ resizeTo: window, backgroundAlpha: 0 });
 
 const espList: Graphics[] = [];
 
+/**更新ESP */
 function updateESP() {
   const player = getSelfBody();
   espList.forEach((v) => {
@@ -40,6 +45,7 @@ function updateESP() {
   });
 }
 
+/**激活ESP */
 export function activateESP(container: HTMLDivElement) {
   Ticker.shared.add(updateESP);
   container.appendChild(app.canvas);

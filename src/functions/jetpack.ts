@@ -1,10 +1,15 @@
+/**
+ * 喷气背包
+ * @module functions/jetpack
+ */
 import { GM_getValue } from "$";
 import { defaultJetPackSpeed, defaultShortcut } from "src/tools/defaults";
 import { Quaternion } from "src/tools/quaternion";
 import { subscribeShortcut } from "./shortcut";
 import { getCameraRotation, getSelfBody } from "src/tools/arch";
+import { switchFunc } from "src/components/functionList";
 
-const shortcut: Shortcut = { ...defaultShortcut };
+const shortcut = { ...defaultShortcut };
 
 subscribeShortcut((t) => {
   Object.assign(shortcut, t);
@@ -27,22 +32,25 @@ async function handleJetpackKey() {
 }
 
 function onKeydown(e: KeyboardEvent) {
-  if (e.key === shortcut.jetPack) {
+  //挂载快捷键
+  if (e.key === shortcut["JetPack"]) {
     void handleJetpackKey();
-    
+    switchFunc("JetPack");
   }
 }
 
 function onKeyUp(e: KeyboardEvent) {
-  if (e.key === shortcut.jetPack) {
-    
+  if (e.key === shortcut["JetPack"]) {
+    switchFunc("JetPack");
   }
 }
 
 if (typeof window !== "undefined") {
   window.addEventListener("keydown", onKeydown);
+  window.addEventListener("keyup", onKeyUp);
 }
 
+/**设置喷气背包速度 */
 export function setJetPackSpeed(speed: number) {
   jetPackSpeed = speed;
 }

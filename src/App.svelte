@@ -1,13 +1,11 @@
 <script lang="ts">
   import Menu from "./components/Menu.svelte";
-  import { GM_getValue } from "$";
   import { bind as bindMovement } from "src/menus/movement";
   import { bind as bindCombat } from "src/menus/combat";
   import { bind as bindCamera } from "src/menus/camera";
   import { bind as bindShortcut } from "src/menus/shortcut";
-  import { defaultShortcut } from "./tools/defaults";
   import { getCore } from "src/tools/core";
-  import { shortcutStore } from "src/functions/shortcut";
+  import { activateShortcut } from "src/functions/shortcut";
   import { onMount, onDestroy } from "svelte";
 
   let movementMenu: Menu | undefined;
@@ -16,26 +14,30 @@
   let shortcutMenu: Menu | undefined;
   let functionList: FunctionList | undefined;
   let ESPContainer: HTMLDivElement;
-  let shortcut = GM_getValue("shortcut", defaultShortcut);
 
   let isResolved = false;
 
-  const unsubShortcut = shortcutStore.subscribe((v) => {
-    Object.assign(shortcut, v);
-  });
-
   let doHideMenu = true;
 
-  function handleKeydown(e: KeyboardEvent) {
-    if (e.key === shortcut.openMenu) {
-      doHideMenu = !doHideMenu;
+  activateShortcut(
+    "Menu",
+    () => {
+      doHideMenu = false;
       (document as any).exitPointerLock?.();
+    },
+    () => {
+      doHideMenu = true;
     }
+  );
+
+  function handleKeydown(e: KeyboardEvent) {
+    //按ESC关闭菜单
     if (!doHideMenu && e.key === "Escape") {
       doHideMenu = true;
     }
   }
 
+  /**禁止右键默认菜单*/
   function preventContext(e: Event) {
     e.preventDefault();
   }
@@ -43,33 +45,36 @@
   onMount(() => {
     document.addEventListener("keydown", handleKeydown);
     document.addEventListener("contextmenu", preventContext);
-    getCore()
-      .then(async () => {
-        isResolved = true;
+    getCore().then(async () => {
+      isResolved = true;
 
-        await waitUntil(
-          () => !(!movementMenu || !cameraMenu || !shortcutMenu || !combatMenu)
-        );
-        console.log("LokiBox Menu Loaded");
+      //挂载菜单
+      await waitUntil(
+        () => !(!movementMenu || !cameraMenu || !shortcutMenu || !combatMenu)
+      );
+      console.log("LokiBox Menu Loaded");
 
-        activateESP(ESPContainer);
+      //激活ESP
+      activateESP(ESPContainer);
 
-        bindMovement(movementMenu!);
-        bindCombat(combatMenu!);
-        bindCamera(cameraMenu!);
-        bindShortcut(shortcutMenu!);
-      })
-      .catch((e) => {
-        console.warn("coreService initialization failed:", e);
-      });
+      bindMovement(movementMenu!);
+      bindCombat(combatMenu!);
+      bindCamera(cameraMenu!);
+      bindShortcut(shortcutMenu!);
+    });
   });
 
+  /**销毁事件挂载*/
   onDestroy(() => {
     document.removeEventListener("keydown", handleKeydown);
     document.removeEventListener("contextmenu", preventContext);
-    unsubShortcut();
   });
 
+  /**
+   * 轮询直到满足条件
+   * @param condition 条件
+   * @param [interval=50] 轮询间隔
+   */
   function waitUntil(condition: () => boolean, interval = 50): Promise<void> {
     return new Promise((resolve) => {
       const timer = setInterval(() => {
@@ -132,6 +137,6 @@
     height: 100vh;
     padding: 0 0 0 0;
     pointer-events: none;
-    z-index: 997;
+    z-index: 996;
   }
 </style>

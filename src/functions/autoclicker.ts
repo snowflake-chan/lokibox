@@ -1,4 +1,9 @@
+/**
+ * 连点器模块
+ * @module functions/autoclicker
+ */
 import { setKeyState } from "src/tools/arch";
+import { activateShortcut } from "./shortcut";
 
 let autoClickerHandler: number | null = null;
 
@@ -20,3 +25,11 @@ export function clearAutoClicker() {
     setKeyState(7, 0);
   }
 }
+
+activateShortcut(
+  "AutoClicker",
+  () => {
+    deployAutoClicker(50);
+  },
+  clearAutoClicker
+);
