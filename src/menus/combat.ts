@@ -12,6 +12,7 @@ import {
 } from "src/functions/aimassist";
 import { bedFucker } from "src/functions/bedfucker";
 import { clearTeammates } from "src/functions/teammates";
+import "src/functions/autopave";
 
 const autoClickSettings = {
   interval: 200,
@@ -58,14 +59,11 @@ export function bind(menu: Menu) {
 
   const aimAssistMenu = menu.addFolder("AimAssist");
 
-
   aimAssistMenu
     .add(aimAssistSettings, "strength", 0.01, 1, 0.01)
     .name("Strength");
 
-  aimAssistMenu
-    .add(aimAssistSettings, "range", 1, 20, 1)
-    .name("Range");
+  aimAssistMenu.add(aimAssistSettings, "range", 1, 20, 1).name("Range");
 
   aimAssistMenu
     .add(aimAssistSettings, "clearTeammates")
