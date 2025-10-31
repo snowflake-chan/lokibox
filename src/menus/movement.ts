@@ -36,7 +36,7 @@ export function bind(menu: Menu) {
     .name("JetPack.Speed")
     .onChange((v: number) => {
       GM_setValue("jetPackSpeed", v);
-      setJetPackSpeed
+      setJetPackSpeed(v)
     });
 
   const teleportFolder = menu.addFolder("Teleport");
