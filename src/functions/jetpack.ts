@@ -24,7 +24,7 @@ async function handleJetpackKey() {
     const forward = new Quaternion(0, 1, 0, 0);
     const { x, y, z } = q.cross(forward).cross(q.inv()).normalize();
     playerBody.vx = z * jetPackSpeed;
-    playerBody.vy = -y * jetPackSpeed;
+    playerBody.vy = -y * jetPackSpeed + 0.05;
     playerBody.vz = x * jetPackSpeed;
   } catch (e) {
     console.error(e);
