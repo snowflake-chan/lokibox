@@ -43,6 +43,7 @@ export function activateShortcut(
   let isActivated = false;
   window.addEventListener("keydown", (event) => {
     if (event.key == GM_getValue("shortcut")[key] && !cd) {
+      switchFunc(key);
       if (isActivated) end();
       else start();
       cd = true;
