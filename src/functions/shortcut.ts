@@ -1,5 +1,5 @@
 import { GM_getValue, GM_setValue } from "$";
-import { switchFunc } from "src/components/functionList";
+import { switchFunc } from "src/functions/funcStatus";
 import { defaultShortcut } from "src/tools/defaults";
 import { type Writable, writable } from "svelte/store";
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { funcStore } from "./functionList";
+  import { funcStore } from "src/functions/funcStatus";
 </script>
 
 <main>

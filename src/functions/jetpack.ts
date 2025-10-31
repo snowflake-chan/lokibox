@@ -7,7 +7,7 @@ import { defaultJetPackSpeed, defaultShortcut } from "src/tools/defaults";
 import { Quaternion } from "src/tools/quaternion";
 import { subscribeShortcut } from "./shortcut";
 import { getCameraRotation, getSelfBody } from "src/tools/arch";
-import { switchFunc } from "src/components/functionList";
+import { switchOn, switchOff } from "src/functions/funcStatus";
 
 const shortcut = { ...defaultShortcut };
 
@@ -35,13 +35,13 @@ function onKeydown(e: KeyboardEvent) {
   //挂载快捷键
   if (e.key === shortcut["JetPack"]) {
     void handleJetpackKey();
-    switchFunc("JetPack");
+    switchOn("JetPack");
   }
 }
 
 function onKeyUp(e: KeyboardEvent) {
   if (e.key === shortcut["JetPack"]) {
-    switchFunc("JetPack");
+    switchOff("JetPack");
   }
 }
 
