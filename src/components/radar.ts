@@ -4,6 +4,7 @@
  */
 import { Application, Container, Graphics } from "pixi.js";
 import { isTeammate } from "src/functions/teammates";
+import { getTeleportPointList } from "src/functions/tppoint";
 import {
   getCameraRotation,
   getOthersBodies,
@@ -18,7 +19,8 @@ export class Radar {
   radarSize = 200;
   maximized = false;
   worldContainer: Container;
-  enemyDots: Graphics[] = [];
+  dots: Graphics[] = [];
+  mapScale = 1;
 
   constructor(container: HTMLDivElement) {
     this.container = container;
@@ -26,6 +28,10 @@ export class Radar {
     this.app = new Application();
     this.worldContainer = new Container();
   }
+
+  /**
+   * 挂载雷达地图
+   */
   async mount() {
     await this.app.init({
       width: this.radarSize,
@@ -55,6 +61,8 @@ export class Radar {
       this.updateRadar();
     });
   }
+
+  /**绘制玩家箭头 */
   drawPlayerArrow(g: Graphics) {
     g.clear()
       .moveTo(0, -8)
@@ -65,48 +73,73 @@ export class Radar {
       .fill({ color: 0xffffff, alpha: 0.7 });
   }
 
+  /**更新雷达内容 */
   updateRadar() {
     const player = this.player;
     const enemies = getOthersBodies();
 
-    let maxDist = 0;
+    // let maxDist = 0;
+
+    // //计算地图尺寸
+    // enemies.forEach((e) => {
+    //   const dx = e.px - player.px;
+    //   const dy = e.py - player.py;
+    //   const dz = e.pz - player.pz;
+    //   const dist = Math.hypot(dx, dy, dz);
+    //   if (dist > maxDist) maxDist = dist;
+    // });
+
+    // this.mapScale = 100 / maxDist;
+
+    // console.log(`mapScale: ${this.mapScale}`)
+
+    //销毁原标记点
+    this.dots.forEach((dot) => dot.destroy());
+    this.dots = [];
+
+    //标记敌人
     enemies.forEach((e) => {
-      const dx = e.px - player.px;
-      const dy = e.py - player.py;
-      const dz = e.pz - player.pz;
-      const dist = Math.hypot(dx, dy, dz);
-      if (dist > maxDist) maxDist = dist;
-    });
-
-    this.enemyDots.forEach((dot) => dot.destroy());
-    this.enemyDots = [];
-
-    enemies.forEach((e) => {
-      const dx = e.px - player.px;
-      const dy = e.pz - player.pz;
-      const yaw = getCameraRotation().getYaw();
-      const cos = Math.cos(-yaw);
-      const sin = Math.sin(-yaw);
-      const rx = dx * cos - dy * sin;
-      const ry = dx * sin + dy * cos;
-
-      const dot = new Graphics();
-      dot.circle(0, 0, 4);
       if (isTeammate(e.id)) {
-        dot.fill({ color: 0x00cc00, alpha: 0.7 });
+        this.drawPoint(e.px, e.pz, 0x00cc00);
       } else {
-        dot.fill({ color: 0xcc0000, alpha: 0.7 });
+        this.drawPoint(e.px, e.pz, 0xcc0000);
       }
-      dot.x = this.radarSize / 2 + rx;
-      dot.y = this.radarSize / 2 + ry;
-      this.worldContainer.addChild(dot);
-      this.enemyDots.push(dot);
     });
+
+    //标记传送点
+    getTeleportPointList().forEach((v) => {
+      this.drawPoint(v.x, v.z, 0xcc00cc);
+    });
+  }
+
+  /**
+   * 绘制一个点
+   * @param x X坐标
+   * @param z Z坐标
+   * @param color 颜色
+   */
+  drawPoint(x: number, z: number, color: number) {
+    const dx = x - this.player.px;
+    const dy = z - this.player.pz;
+    const yaw = getCameraRotation().getYaw();
+    const cos = Math.cos(-yaw);
+    const sin = Math.sin(-yaw);
+    const rx = dx * cos - dy * sin;
+    const ry = dx * sin + dy * cos;
+
+    const dot = new Graphics();
+    dot.circle(0, 0, 4);
+    dot.fill({ color, alpha: 0.7 });
+
+    dot.x = this.radarSize / 2 + rx * this.mapScale;
+    dot.y = this.radarSize / 2 + ry * this.mapScale;
+    this.worldContainer.addChild(dot);
+    this.dots.push(dot);
   }
 
   destroy() {
     this.app.ticker.stop();
     this.app.destroy(true, { children: true });
-    this.enemyDots.forEach((dot) => dot.destroy());
+    this.dots.forEach((dot) => dot.destroy());
   }
 }
