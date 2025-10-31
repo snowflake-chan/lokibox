@@ -32,7 +32,7 @@ export function bind(menu: Menu) {
   //参数设置
   //喷气背包
   menu
-    .add(movementSettings, "jetPackSpeed", 0.5, 10, 0.5)
+    .add(movementSettings, "jetPackSpeed", 0.5, 10, 0.1)
     .name("JetPack.Speed")
     .onChange((v: number) => {
       GM_setValue("jetPackSpeed", v);
